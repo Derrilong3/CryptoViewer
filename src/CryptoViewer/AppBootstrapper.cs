@@ -1,8 +1,11 @@
 ﻿using Caliburn.Micro;
-using CryptoViewer.Modules.Shell.ViewModels;
-using CryptoViewer.Services;
+using CryptoViewer.Base.Services;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
+using System.ComponentModel.Composition.Hosting;
+using System.ComponentModel.Composition.ReflectionModel;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Windows;
@@ -11,7 +14,12 @@ namespace CryptoViewer
 {
     internal class AppBootstrapper : BootstrapperBase
     {
-        private SimpleContainer _container;
+        private List<Assembly> _priorityAssemblies;
+
+        protected CompositionContainer Container { get; set; }
+
+        internal IList<Assembly> PriorityAssemblies
+            => _priorityAssemblies;
 
         public AppBootstrapper()
         {
@@ -20,47 +28,86 @@ namespace CryptoViewer
 
         protected override void Configure()
         {
-            _container = new SimpleContainer();
+            PopulateAssemblySource();
 
-            _container
-                .Singleton<IWindowManager, WindowManager>()
-                .Singleton<IEventAggregator, EventAggregator>()
-                .Singleton<IShell, ShellViewModel>();
+            _priorityAssemblies = SelectAssemblies().ToList();
+            var priorityCatalog = new AggregateCatalog(_priorityAssemblies.Select(x => new AssemblyCatalog(x)));
+            var priorityProvider = new CatalogExportProvider(priorityCatalog);
 
-            foreach (var assembly in SelectAssemblies())
+            var mainCatalog = new AggregateCatalog(
+                AssemblySource.Instance
+                    .Where(assembly => !_priorityAssemblies.Contains(assembly))
+                    .Select(x => new AssemblyCatalog(x)));
+            var mainProvider = new CatalogExportProvider(mainCatalog);
+
+            Container = new CompositionContainer(priorityProvider, mainProvider);
+            priorityProvider.SourceProvider = Container;
+            mainProvider.SourceProvider = Container;
+
+            var batch = new CompositionBatch();
+
+            BindServices(batch);
+            batch.AddExportedValue(mainCatalog);
+
+            Container.Compose(batch);
+        }
+
+        protected virtual void PopulateAssemblySource()
+        {
+            string currentWorkingDir = Path.GetDirectoryName(Path.GetFullPath(@"./"));
+            string baseDirectory = Path.GetDirectoryName(Path.GetFullPath(AppContext.BaseDirectory));
+
+            PopulateAssemblySourceUsingDirectoryCatalog(currentWorkingDir);
+            if (currentWorkingDir != baseDirectory)
             {
-                assembly.GetTypes()
-               .Where(type => type.IsClass)
-               .Where(type => type.Name.EndsWith("ViewModel"))
-               .ToList()
-               .ForEach(viewModelType => _container.RegisterPerRequest(
-                   viewModelType, viewModelType.ToString(), viewModelType));
+                PopulateAssemblySourceUsingDirectoryCatalog(baseDirectory);
             }
         }
 
-        protected override object GetInstance(Type service, string key)
+        protected void PopulateAssemblySourceUsingDirectoryCatalog(string path)
         {
-            return _container.GetInstance(service, key);
+            var directoryCatalog = new DirectoryCatalog(path);
+            AssemblySource.Instance.AddRange(
+                directoryCatalog.Parts
+                    .Select(part => ReflectionModelServices.GetPartType(part).Value.Assembly)
+                    .Where(assembly => !AssemblySource.Instance.Contains(assembly)));
         }
 
-        protected override IEnumerable<object> GetAllInstances(Type service)
+        protected virtual IEnumerable<Assembly> PublishSingleFileBypassAssemblies
+            => Enumerable.Empty<Assembly>();
+
+        protected virtual void BindServices(CompositionBatch batch)
         {
-            return _container.GetAllInstances(service);
+            batch.AddExportedValue<IWindowManager>(new WindowManager());
+            batch.AddExportedValue<IEventAggregator>(new EventAggregator());
+            batch.AddExportedValue(Container);
+            batch.AddExportedValue(this);
         }
+
+        protected override object GetInstance(Type serviceType, string key)
+        {
+            string contract = string.IsNullOrEmpty(key) ? AttributedModelServices.GetContractName(serviceType) : key;
+            var exports = Container.GetExports<object>(contract);
+
+            if (exports.Any())
+                return exports.First().Value;
+
+            throw new Exception(string.Format("Could not locate any instances of contract {0}.", contract));
+        }
+
+        protected override IEnumerable<object> GetAllInstances(Type serviceType)
+            => Container.GetExportedValues<object>(AttributedModelServices.GetContractName(serviceType));
 
         protected override void BuildUp(object instance)
-        {
-            _container.BuildUp(instance);
-        }
+            => Container.SatisfyImportsOnce(instance);
 
         protected override void OnStartup(object sender, StartupEventArgs e)
         {
+            base.OnStartup(sender, e);
             DisplayRootViewForAsync<IShell>();
         }
 
         protected override IEnumerable<Assembly> SelectAssemblies()
-        {
-            return new[] { Assembly.GetExecutingAssembly() };
-        }
+            => new[] { Assembly.GetEntryAssembly() };
     }
 }

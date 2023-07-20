@@ -1,5 +1,6 @@
 ﻿using Caliburn.Micro;
 using CryptoViewer.Base.Services;
+using CryptoViewer.Modules.Home.ViewModels;
 using CryptoViewer.Modules.MainMenu.Models;
 using System;
 using System.Collections.Generic;
@@ -17,7 +18,12 @@ namespace CryptoViewer.Modules.MainMenu.ViewModels
         [ImportingConstructor]
         public MenuViewModel()
         {
-            Modules = Assembly.GetAssembly(typeof(IMenuItem)).GetTypes().Where(myType => !myType.IsAbstract && typeof(IMenuItem).IsAssignableFrom(myType)).Select(t => (IMenuItem)Activator.CreateInstance(t)).ToList();
+            Modules = Assembly.GetAssembly(typeof(IMenuItem))
+                .GetTypes()
+                .Where(myType => !myType.IsAbstract && typeof(IMenuItem)
+                .IsAssignableFrom(myType))
+                .Select(t => (IMenuItem)Activator.CreateInstance(t))
+                .ToList();
         }
 
         private IMenuItem _selectedContent;
@@ -38,7 +44,7 @@ namespace CryptoViewer.Modules.MainMenu.ViewModels
 
         protected override void OnViewLoaded(object view)
         {
-            //SelectedContent = Modules.FirstOrDefault(x => x.UserInterface.GetType() == typeof());
+            SelectedContent = Modules.FirstOrDefault(x => x.UserInterface.GetType() == typeof(HomeViewModel));
         }
     }
 }

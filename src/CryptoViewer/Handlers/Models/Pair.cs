@@ -1,9 +1,11 @@
 ﻿using CryptoViewer.Base.Interfaces;
+using CryptoViewer.Utilities.Attributes;
 using Newtonsoft.Json;
 namespace CryptoViewer.Handlers.Models
 {
     internal abstract class Pair : IPair
     {
+        [ItemColumnData("Pair")]
         public string PairName => $"{BaseSymbol}/{QuoteSymbol}";
 
         [JsonProperty("baseId")]
@@ -15,6 +17,7 @@ namespace CryptoViewer.Handlers.Models
         [JsonProperty("exchangeId")]
         public string ExhangeId { get; set; }
 
+        [ItemColumnData("Price")]
         [JsonProperty("priceUsd")]
         public float PriceUsd { get; set; }
 
@@ -24,6 +27,7 @@ namespace CryptoViewer.Handlers.Models
         [JsonProperty("quoteSymbol")]
         public string QuoteSymbol { get; set; }
 
+        [ItemColumnData("Volume (24h)")]
         [JsonProperty("volumeUsd24Hr")]
         public float VolumeUsd { get; set; }
     }

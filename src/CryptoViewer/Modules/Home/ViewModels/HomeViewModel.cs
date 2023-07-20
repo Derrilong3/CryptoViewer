@@ -1,10 +1,11 @@
 ﻿using Caliburn.Micro;
 using CryptoViewer.Base.Interfaces;
 using CryptoViewer.Base.Services;
-using CryptoViewer.Handlers.Models;
+using CryptoViewer.Utilities.GridViewUtilities;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
+using System.Windows.Data;
 
 namespace CryptoViewer.Modules.Home.ViewModels
 {
@@ -17,7 +18,11 @@ namespace CryptoViewer.Modules.Home.ViewModels
         public HomeViewModel(IApiHandler apiHandler)
         {
             _apiHandler = apiHandler;
+            _gridHandler = new GridViewHandler();
         }
+
+        private GridViewHandler _gridHandler;
+        public GridViewHandler GridHandler => _gridHandler;
 
         private IEnumerable<IExchanger> _exchangers;
         public IEnumerable<IExchanger> Exchangers
@@ -34,16 +39,33 @@ namespace CryptoViewer.Modules.Home.ViewModels
         private IExchanger _selectedExchanger;
         public IExchanger SelectedExchanger
         {
-            get { return _selectedExchanger; }
+            get => _selectedExchanger;
             set
             {
                 _selectedExchanger = value;
-                NotifyOfPropertyChange(nameof(Pairs));
+                Pairs = _apiHandler.GetCurrencies(_selectedExchanger);
+
                 NotifyOfPropertyChange(nameof(SelectedExchanger));
             }
         }
 
-        public IEnumerable<InnerPair> Pairs => _selectedExchanger != null ? _apiHandler.GetCurrencies(_selectedExchanger) : Enumerable.Empty<InnerPair>();
+        public IEnumerable<IPair> _pairs;
+        public IEnumerable<IPair> Pairs
+        {
+            get => _pairs;
+            set
+            {
+                _pairs = value;
+
+                if (_gridHandler.View == null && _pairs.Count() > 0)
+                {
+                    _gridHandler.View = (CollectionView)CollectionViewSource.GetDefaultView(_pairs);
+                    _gridHandler.CreateGridColumns((string.Empty, _pairs.First().GetType()));
+                }
+
+                NotifyOfPropertyChange(nameof(Pairs));
+            }
+        }
 
         protected override void OnViewLoaded(object view)
         {

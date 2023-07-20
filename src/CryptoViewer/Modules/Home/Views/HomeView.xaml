@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:CryptoViewer.Modules.Home.ViewModels"
+             xmlns:u="clr-namespace:CryptoViewer.Utilities.GridViewUtilities"
              mc:Ignorable="d"
              d:DataContext="{d:DesignInstance Type=local:HomeViewModel}"
              d:DesignHeight="450" d:DesignWidth="800">
@@ -28,13 +29,7 @@
 
         <ListView ItemsSource="{Binding Pairs}" Margin="10,10,10,10" Grid.Row="2">
             <ListView.View>
-                <GridView>
-                    <GridViewColumn Header="Pair" Width="60" DisplayMemberBinding="{Binding PairName}"/>
-                    <GridViewColumn Header="Price" Width="60" DisplayMemberBinding="{Binding PriceUsd}"/>
-                    <GridViewColumn Header="Volume (24h)" Width="80" DisplayMemberBinding="{Binding VolumeUsd}"/>
-                    <GridViewColumn Header="Volume (%)" Width="80" DisplayMemberBinding="{Binding VolumePercent}"/>
-                    <GridViewColumn Header="Trades (24h)" Width="80" DisplayMemberBinding="{Binding TradesCount}"/>
-                </GridView>
+                <GridView u:GridViewColumnsBehavior.Columns = "{Binding GridHandler.Columns}"/>
             </ListView.View>
         </ListView>
     </Grid>

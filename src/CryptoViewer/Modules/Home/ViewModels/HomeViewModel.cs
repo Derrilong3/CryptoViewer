@@ -5,19 +5,18 @@ using CryptoViewer.Handlers.Models;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
-using System.Threading;
 
 namespace CryptoViewer.Modules.Home.ViewModels
 {
     [Export(typeof(IHome))]
     internal class HomeViewModel : Conductor<IScreen>, IHome
     {
-        private IApiHandler _handler;
+        private IApiHandler _apiHandler;
 
         [ImportingConstructor]
-        public HomeViewModel(IApiHandler handler)
+        public HomeViewModel(IApiHandler apiHandler)
         {
-            _handler = handler;
+            _apiHandler = apiHandler;
         }
 
         private IEnumerable<IExchanger> _exchangers;
@@ -26,7 +25,7 @@ namespace CryptoViewer.Modules.Home.ViewModels
             get
             {
                 if (_exchangers == null)
-                    _exchangers = _handler.GetExchangers();
+                    _exchangers = _apiHandler.GetExchangers();
 
                 return _exchangers;
             }
@@ -44,7 +43,7 @@ namespace CryptoViewer.Modules.Home.ViewModels
             }
         }
 
-        public IEnumerable<InnerPair> Pairs => _selectedExchanger != null ? _handler.GetCurrencies(_selectedExchanger) : Enumerable.Empty<InnerPair>();
+        public IEnumerable<InnerPair> Pairs => _selectedExchanger != null ? _apiHandler.GetCurrencies(_selectedExchanger) : Enumerable.Empty<InnerPair>();
 
         protected override void OnViewLoaded(object view)
         {

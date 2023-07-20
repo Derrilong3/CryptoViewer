@@ -6,8 +6,8 @@ namespace CryptoViewer.Base.Services
     internal interface IApiHandler
     {
         IEnumerable<IExchanger> GetExchangers();
-        IEnumerable<ICurrency> GetExchangers(ICurrency exchanger);
-        IEnumerable<ICurrency> GetCurrencies();
+        IEnumerable<ICoin> GetExchangers(ICoin exchanger);
+        IEnumerable<ICoin> GetCurrencies();
         IEnumerable<IPair> GetCurrencies(IExchanger exchanger);
     }
 }

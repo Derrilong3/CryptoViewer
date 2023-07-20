@@ -6,7 +6,7 @@ using System.Net.Cache;
 using System.Text;
 using System.Threading;
 
-namespace SkinsTradeAssistant.Models
+namespace CryptoViewer.Utilities
 {
     internal class WebFetcher
     {

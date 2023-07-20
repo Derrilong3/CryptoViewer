@@ -68,7 +68,7 @@ namespace CryptoViewer.Handlers.CoinCap
             }
         }
 
-        public IEnumerable<InnerPair> GetCurrencies(IExchanger exchanger)
+        public IEnumerable<IPair> GetCurrencies(IExchanger exchanger)
         {
             try
             {

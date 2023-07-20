@@ -9,6 +9,6 @@ namespace CryptoViewer.Base.Services
         IEnumerable<IExchanger> GetExchangers();
         IEnumerable<ICurrency> GetExchangers(ICurrency exchanger);
         IEnumerable<ICurrency> GetCurrencies();
-        IEnumerable<InnerPair> GetCurrencies(IExchanger exchanger);
+        IEnumerable<IPair> GetCurrencies(IExchanger exchanger);
     }
 }

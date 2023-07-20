@@ -7,6 +7,6 @@ namespace CryptoViewer.Modules.Home
     internal interface IHome
     {
         IEnumerable<IExchanger> Exchangers { get; }
-        IEnumerable<InnerPair> Pairs { get; }
+        IEnumerable<IPair> Pairs { get; }
     }
 }

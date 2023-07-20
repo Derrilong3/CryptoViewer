@@ -1,5 +1,4 @@
 ﻿using CryptoViewer.Base.Interfaces;
-using CryptoViewer.Handlers.Models;
 using System.Collections.Generic;
 
 namespace CryptoViewer.Base.Services

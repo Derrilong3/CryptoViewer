@@ -11,6 +11,6 @@ namespace CryptoViewer.Handlers.Models
 
         [ItemColumnData("Trades (24h)")]
         [JsonProperty("tradesCount24Hr")]
-        public string TradesCount { get; set; }
+        public int TradesCount { get; set; }
     }
 }

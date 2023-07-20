@@ -59,10 +59,9 @@ namespace CryptoViewer.Modules.Home.ViewModels
 
                 if (_gridHandler.View == null && _pairs.Count() > 0)
                 {
-                    _gridHandler.View = (CollectionView)CollectionViewSource.GetDefaultView(_pairs);
                     _gridHandler.CreateGridColumns((string.Empty, _pairs.First().GetType()));
                 }
-
+                _gridHandler.View = (CollectionView)CollectionViewSource.GetDefaultView(_pairs);
                 NotifyOfPropertyChange(nameof(Pairs));
             }
         }

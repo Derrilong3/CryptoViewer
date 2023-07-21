@@ -6,6 +6,7 @@ namespace CryptoViewer.Modules.MainMenu
     internal interface IMenu
     {
         List<IMenuItem> Modules { get; }
-        IMenuItem SelectedContent { get; }
+
+        void ClickMenu(IMenuItem item);
     }
 }

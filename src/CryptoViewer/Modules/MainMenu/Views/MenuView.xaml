@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:CryptoViewer.Modules.MainMenu.ViewModels"
+             xmlns:cal="http://www.caliburnproject.org"
              mc:Ignorable="d"
              d:DataContext="{d:DesignInstance Type=local:MenuViewModel}">
     <Grid>
@@ -13,12 +14,6 @@
                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                  ScrollViewer.VerticalScrollBarVisibility="Disabled"
                  HorizontalAlignment="Left">
-            <ListBox.ItemContainerStyle>
-                <Style TargetType="ListBoxItem">
-                    <!-- Disable the focus visual -->
-                    <Setter Property="FocusVisualStyle" Value="{x:Null}" />
-                </Style>
-            </ListBox.ItemContainerStyle>
             <ListBox.ItemsPanel>
                 <ItemsPanelTemplate>
                     <WrapPanel IsItemsHost="True" />
@@ -26,7 +21,11 @@
             </ListBox.ItemsPanel>
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <TextBlock Text="{Binding Name}"></TextBlock>
+                    <TextBlock Text="{Binding Name}" >
+                        <cal:Message.Attach>
+                           [Event PreviewMouseDown] = [Action ClickMenu($dataContext)]
+                        </cal:Message.Attach>
+                    </TextBlock>
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>

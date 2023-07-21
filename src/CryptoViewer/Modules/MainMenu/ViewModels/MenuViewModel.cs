@@ -15,7 +15,6 @@ namespace CryptoViewer.Modules.MainMenu.ViewModels
     {
         public List<IMenuItem> Modules { get; }
 
-        [ImportingConstructor]
         public MenuViewModel()
         {
             Modules = Assembly.GetAssembly(typeof(IMenuItem))
@@ -26,25 +25,20 @@ namespace CryptoViewer.Modules.MainMenu.ViewModels
                 .ToList();
         }
 
-        private IMenuItem _selectedContent;
-        public IMenuItem SelectedContent
+        public void ClickMenu(IMenuItem item)
         {
-            get => _selectedContent;
-            set
-            {
-                if (value != _selectedContent)
-                {
-                    _selectedContent = value;
+            var shell = IoC.Get<IShell>();
+            var selectedContent = item.UserInterface;
 
-                    var shell = IoC.Get<IShell>();
-                    shell.ActivateItem(_selectedContent.UserInterface);
-                }
-            }
+            if (selectedContent == shell.ActiveItem)
+                return;
+
+            shell.ActivateItem(selectedContent);
         }
 
         protected override void OnViewLoaded(object view)
         {
-            SelectedContent = Modules.FirstOrDefault(x => x.UserInterface.GetType() == typeof(HomeViewModel));
+            ClickMenu(Modules.FirstOrDefault(x => x.UserInterface.GetType() == typeof(HomeViewModel)));
         }
     }
 }

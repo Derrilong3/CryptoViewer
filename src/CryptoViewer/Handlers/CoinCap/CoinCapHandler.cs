@@ -18,7 +18,8 @@ namespace CryptoViewer.Handlers.CoinCap
     internal class CoinCapHandler : PropertyChangedBase, IApiHandler
     {
         private const string GetExchangersUrl = "https://api.coincap.io/v2/exchanges";
-        private const string GetPriceByMarketUrl = "https://api.coincap.io/v2/markets";
+        private const string GetPairsByMarketUrl = "https://api.coincap.io/v2/markets";
+        private const string GetCoinsDatatUrl = "https://api.coincap.io/v2/assets";
 
         public CoinCapHandler()
         {
@@ -43,28 +44,36 @@ namespace CryptoViewer.Handlers.CoinCap
             }
         }
 
-        public IEnumerable<ICurrency> GetExchangers(ICurrency exchanger)
+        public IEnumerable<ICoin> GetExchangers(ICoin exchanger)
         {
             try
             {
-                return Enumerable.Empty<ICurrency>();
+                return Enumerable.Empty<ICoin>();
             }
             catch (Exception ex)
             {
-                return Enumerable.Empty<ICurrency>();
+                return Enumerable.Empty<ICoin>();
             }
         }
 
-        public IEnumerable<ICurrency> GetCurrencies()
+        public IEnumerable<ICoin> GetCurrencies()
         {
             try
             {
-                return Enumerable.Empty<ICurrency>();
+                NameValueCollection data = new NameValueCollection
+                {
+                    { "limit", "2000" }
+                };
 
+                string rawJson = WebFetcher.Fetch(GetCoinsDatatUrl, "GET", data);
+
+                Root<Coin> root = JsonConvert.DeserializeObject<Root<Coin>>(rawJson, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore });
+
+                return root.Data;
             }
             catch (Exception ex)
             {
-                return Enumerable.Empty<ICurrency>();
+                return Enumerable.Empty<ICoin>();
             }
         }
 
@@ -75,15 +84,14 @@ namespace CryptoViewer.Handlers.CoinCap
                 NameValueCollection data = new NameValueCollection
                 {
                     { "exchangeId", exchanger.Id },
-                    { "limit", 10.ToString() }
+                    { "limit", 30.ToString() }
                 };
 
-                string rawJson = WebFetcher.Fetch(GetPriceByMarketUrl, "GET", data);
+                string rawJson = WebFetcher.Fetch(GetPairsByMarketUrl, "GET", data);
 
-                Root<InnerPair> root = JsonConvert.DeserializeObject<Root<InnerPair>>(rawJson);
+                Root<InnerPair> root = JsonConvert.DeserializeObject<Root<InnerPair>>(rawJson, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore });
 
                 return root.Data;
-
             }
             catch (Exception ex)
             {

@@ -2,7 +2,7 @@
 using CryptoViewer.Modules.Home;
 using CryptoViewer.Modules.MainMenu.Models;
 
-namespace CryptoViewer.Modules.CurrencyBrowser
+namespace CryptoViewer.Modules.CoinBrowser
 {
     internal class BrowserMenuItem : IMenuItem
     {

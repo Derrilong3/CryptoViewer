@@ -1,7 +1,7 @@
 ﻿using CryptoViewer.Base.Interfaces;
 using System.Collections.Generic;
 
-namespace CryptoViewer.Modules.CurrencyBrowser
+namespace CryptoViewer.Modules.CoinBrowser
 {
     internal interface IBrowser
     {

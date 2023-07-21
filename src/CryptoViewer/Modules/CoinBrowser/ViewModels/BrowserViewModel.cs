@@ -8,7 +8,7 @@ using System.ComponentModel.Composition;
 using System.Linq;
 using System.Windows.Data;
 
-namespace CryptoViewer.Modules.CurrencyBrowser.ViewModels
+namespace CryptoViewer.Modules.CoinBrowser.ViewModels
 {
     [Export(typeof(IBrowser))]
     internal class BrowserViewModel : Conductor<IScreen>, IBrowser

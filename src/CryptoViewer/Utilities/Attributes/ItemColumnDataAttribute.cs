@@ -7,14 +7,16 @@ namespace CryptoViewer.Utilities.Attributes
     {
         public string Name { get; set; }
         public int Width { get; set; }
+        public string StringFormat { get; set; }
         public string Group { get; set; }
 
         public ItemColumnDataAttribute() { }
 
-        public ItemColumnDataAttribute(string name, int width = 100, string group = "")
+        public ItemColumnDataAttribute(string name, int width = 100, string stringFormat = "", string group = "")
         {
             Name = name;
             Width = width;
+            StringFormat = stringFormat;
             Group = group;
         }
     }

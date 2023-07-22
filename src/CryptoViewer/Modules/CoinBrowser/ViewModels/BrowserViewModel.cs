@@ -14,11 +14,13 @@ namespace CryptoViewer.Modules.CoinBrowser.ViewModels
     internal class BrowserViewModel : Conductor<IScreen>, IBrowser
     {
         private IApiHandler _apiHandler;
+        private IShell _shell;
 
         [ImportingConstructor]
-        public BrowserViewModel(IApiHandler apiHandler)
+        public BrowserViewModel(IApiHandler apiHandler, IShell shell)
         {
             _apiHandler = apiHandler;
+            _shell = shell;
             _gridHandler = new GridViewHandler();
         }
 
@@ -44,7 +46,18 @@ namespace CryptoViewer.Modules.CoinBrowser.ViewModels
 
                 return _currencies;
             }
+        }
 
+        public ICoin SelectedCoin
+        {
+            get => null;
+            set
+            {
+                var details = IoC.Get<IDetails>();
+
+                details.Coin = value;
+                _shell.ActivateItem((IScreen)details);
+            }
         }
 
         #region Table filtring

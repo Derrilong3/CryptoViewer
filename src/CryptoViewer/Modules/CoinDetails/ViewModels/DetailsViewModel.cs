@@ -33,6 +33,8 @@ namespace CryptoViewer.Modules.CoinDetails.ViewModels
         public SeriesCollection Chart => _chart.SeriesCollection;
         public string[] Labels => _chart.Labels;
 
+        public string Name => $"{Coin.Name} ({Coin.Symbol})";
+
         private ICoin _coin;
         public ICoin Coin
         {
@@ -47,6 +49,7 @@ namespace CryptoViewer.Modules.CoinDetails.ViewModels
                 Pairs = _apiHandler.GetExchangers(_coin);
 
                 NotifyOfPropertyChange(nameof(Coin));
+                NotifyOfPropertyChange(nameof(Name));
             }
         }
 

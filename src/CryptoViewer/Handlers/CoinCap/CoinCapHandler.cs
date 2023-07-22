@@ -23,6 +23,7 @@ namespace CryptoViewer.Handlers.CoinCap
         private IWebFetcher _webFetcher;
 
         private IEnumerable<ICoin> _coinGeckos;
+        private IEnumerable<ICoin> _coinsCap;
         private Dictionary<string, Dictionary<string, double[][]>> _candles;
 
         [ImportingConstructor]
@@ -71,6 +72,9 @@ namespace CryptoViewer.Handlers.CoinCap
         {
             try
             {
+                if (_coinsCap != null)
+                    return _coinsCap;
+
                 NameValueCollection data = new NameValueCollection
                 {
                     { "limit", "2000" }
@@ -80,7 +84,9 @@ namespace CryptoViewer.Handlers.CoinCap
 
                 Root<Coin[]> root = JsonConvert.DeserializeObject<Root<Coin[]>>(rawJson, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore });
 
-                return root.Data;
+                _coinsCap = root.Data;
+
+                return _coinsCap;
             }
             catch (Exception ex)
             {

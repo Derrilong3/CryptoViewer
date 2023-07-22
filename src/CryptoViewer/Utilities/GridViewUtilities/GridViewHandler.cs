@@ -77,7 +77,15 @@ namespace CryptoViewer.Utilities.GridViewUtilities
                     };
 
                     string path = columnType.propertyPath == string.Empty ? property.Name : $"{columnType.propertyPath}.{property.Name}";
-                    column.DisplayMemberBinding = new Binding(path);
+
+                    Binding binding = new Binding(path);
+
+                    if (attribute.StringFormat != string.Empty)
+                    {
+                        binding.StringFormat = attribute.StringFormat;
+                    }
+
+                    column.DisplayMemberBinding = binding;
 
                     Columns.Add(column);
                 }

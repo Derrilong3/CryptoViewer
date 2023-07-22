@@ -1,6 +1,4 @@
-﻿using CryptoViewer.Handlers.Models;
-using Newtonsoft.Json;
-using System;
+﻿using Newtonsoft.Json;
 
 namespace CryptoViewer.Handlers.CoinCap.WebResponseClasses
 {

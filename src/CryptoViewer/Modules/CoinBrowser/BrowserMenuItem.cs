@@ -1,5 +1,4 @@
 ﻿using Caliburn.Micro;
-using CryptoViewer.Modules.Home;
 using CryptoViewer.Modules.MainMenu.Models;
 
 namespace CryptoViewer.Modules.CoinBrowser

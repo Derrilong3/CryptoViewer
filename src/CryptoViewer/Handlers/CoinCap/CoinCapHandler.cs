@@ -95,7 +95,7 @@ namespace CryptoViewer.Handlers.CoinCap
                 string url = $"{GetCoinsDatatUrl}/{id}";
                 string rawJson = _webFetcher.Fetch(url, "GET");
 
-                Root<Coin> coin = JsonConvert.DeserializeObject<Root<Coin>> (rawJson, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore });
+                Root<Coin> coin = JsonConvert.DeserializeObject<Root<Coin>>(rawJson, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore });
 
                 return coin.Data;
             }

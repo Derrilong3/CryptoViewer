@@ -21,6 +21,8 @@ namespace CryptoViewer.Handlers.CoinCap
         private const string GetPairsByMarketUrl = "https://api.coincap.io/v2/markets";
         private const string GetCoinsDatatUrl = "https://api.coincap.io/v2/assets";
 
+        private IEnumerable<ICoin> _coinGeckos;
+
         public CoinCapHandler()
         {
             string s = WebFetcher.Fetch("https://api.coincap.io/v2/candles?exchange=binance&interval=h8&baseId=BTC&quoteId=USD", "GET");
@@ -104,7 +106,20 @@ namespace CryptoViewer.Handlers.CoinCap
         {
             try
             {
-                string getOHCLUrl = $"https://api.coingecko.com/api/v3/coins/{coin.Id}/ohlc";
+                string rawJson;
+
+                if (_coinGeckos == null)
+                {
+                    string getCoinList = "https://api.coingecko.com/api/v3/coins/list";
+
+                    rawJson = WebFetcher.Fetch(getCoinList, "GET");
+
+                    _coinGeckos = JsonConvert.DeserializeObject<Coin[]>(rawJson, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore });
+                }
+
+                string id = _coinGeckos.First(x => x.Symbol.ToLower() == coin.Symbol.ToLower()).Id;
+
+                string getOHCLUrl = $"https://api.coingecko.com/api/v3/coins/{id}/ohlc";
 
                 NameValueCollection data = new NameValueCollection
                 {
@@ -112,7 +127,7 @@ namespace CryptoViewer.Handlers.CoinCap
                     { "days", interval.ToString() }
                 };
 
-                string rawJson = WebFetcher.Fetch(getOHCLUrl, "GET", data);
+                rawJson = WebFetcher.Fetch(getOHCLUrl, "GET", data);
 
                 double[][] result = JsonConvert.DeserializeObject<double[][]>(rawJson, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore });
 

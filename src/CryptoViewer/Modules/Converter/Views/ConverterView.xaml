@@ -16,7 +16,7 @@
                 </Grid.RowDefinitions>
                 <Label HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="24">Convert</Label>
 
-                <TextBox Width="356" Margin="0,112,0,50"  VerticalAlignment="Bottom" HorizontalAlignment="Center" Text="{Binding FirstAmount, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" FontSize="24"/>
+                <TextBox Width="356" Margin="0,112,0,50"  VerticalAlignment="Bottom" HorizontalAlignment="Center" Text="{Binding FirstAmountText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" FontSize="24"/>
                 <ComboBox Width="95" Height="34" Margin="583,0,100,49" VerticalAlignment="Bottom" HorizontalAlignment="Center" ItemsSource="{Binding Currencies}" SelectedItem="{Binding FirstCoin}" DisplayMemberPath="Name" FontSize="16">
                     <ComboBox.ItemsPanel>
                         <ItemsPanelTemplate>

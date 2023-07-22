@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:local="clr-namespace:CryptoViewer.Modules.CoinDetails.Views"
+             xmlns:cal="http://www.caliburnproject.org"
              xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
              mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800">
@@ -16,13 +16,36 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition />
             <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
 
-        <lvc:CartesianChart Series="{Binding Chart}" Margin="10,10,10,10" Grid.Row="1" Grid.ColumnSpan="2">
+        <lvc:CartesianChart Series="{Binding Chart}" Grid.Row="1" Grid.ColumnSpan="2">
             <lvc:CartesianChart.AxisX>
                 <lvc:Axis Labels="{Binding Labels}"/>
             </lvc:CartesianChart.AxisX>
         </lvc:CartesianChart>
+
+        <Button Height="20" Width="50" Grid.Column="1" Margin="0,0,340,10" VerticalAlignment="Bottom" HorizontalAlignment="Right"
+                Content="1D"
+                cal:Message.Attach="[Event Click] = [Action IntervalValue('1')]"/>
+        <Button Height="20" Width="50" Grid.Column="1" Margin="0,0,285,10" VerticalAlignment="Bottom" HorizontalAlignment="Right"
+                Content="1W"
+                cal:Message.Attach="[Event Click] = [Action IntervalValue('7')]"/>
+        <Button Height="20" Width="50" Grid.Column="1" Margin="0,0,230,10" VerticalAlignment="Bottom" HorizontalAlignment="Right"
+                Content="1M"
+                cal:Message.Attach="[Event Click] = [Action IntervalValue('30')]"/>
+        <Button Height="20" Width="50" Grid.Column="1" Margin="0,0,175,10" VerticalAlignment="Bottom" HorizontalAlignment="Right"
+                Content="3M"
+                cal:Message.Attach="[Event Click] = [Action IntervalValue('90')]"/>
+        <Button Height="20" Width="50" Grid.Column="1" Margin="0,0,120,10" VerticalAlignment="Bottom" HorizontalAlignment="Right"
+                Content="6M"
+                cal:Message.Attach="[Event Click] = [Action IntervalValue('180')]"/>
+        <Button Height="20" Width="50" Grid.Column="1" Margin="0,0,65,10" VerticalAlignment="Bottom" HorizontalAlignment="Right"
+                Content="1Y"
+                cal:Message.Attach="[Event Click] = [Action IntervalValue('365')]"/>
+        <Button Height="20" Width="50" Grid.Column="1" Margin="0,0,10,10" VerticalAlignment="Bottom" HorizontalAlignment="Right"
+                Content="All"
+                cal:Message.Attach="[Event Click] = [Action IntervalValue('max')]"/>
 
         <ListView Margin="10,10,10,10" Grid.Row="0" Grid.Column="0"/>
     </Grid>

@@ -4,6 +4,8 @@ using CryptoViewer.Base.Services;
 using CryptoViewer.Charts.LiveCharts;
 using LiveCharts;
 using System.ComponentModel.Composition;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace CryptoViewer.Modules.CoinDetails.ViewModels
 {
@@ -25,11 +27,23 @@ namespace CryptoViewer.Modules.CoinDetails.ViewModels
         public SeriesCollection Chart => _chart.SeriesCollection;
         public string[] Labels => _chart.Labels;
 
+        public void IntervalValue(string interval)
+        {
+            double[][] data = _apiHandler.GetOHLC(Coin, interval);
+            _chart.InitCandleStickChart(Coin.Name, data);
+            NotifyOfPropertyChange(nameof(Labels));
+        }
+
         protected override void OnViewReady(object view)
         {
-            double[][] data = _apiHandler.GetOHLC(Coin, 30);
-            _chart.InitCandleStickChart(data);
-            NotifyOfPropertyChange(nameof(Labels));
+            IntervalValue("1");
+        }
+
+        protected override Task OnDeactivateAsync(bool close, CancellationToken cancellationToken)
+        {
+            _chart.Dispose();
+
+            return base.OnDeactivateAsync(close, cancellationToken);
         }
     }
 }

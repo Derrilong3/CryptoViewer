@@ -15,7 +15,7 @@ namespace CryptoViewer.Handlers.Models
         public string BaseSymbol { get; set; }
 
         [JsonProperty("exchangeId")]
-        public string ExhangeId { get; set; }
+        public virtual string ExhangeId { get; set; }
 
         [ItemColumnData("Price")]
         [JsonProperty("priceUsd")]

@@ -1,4 +1,5 @@
 ﻿using Caliburn.Micro;
+using CryptoViewer.Base.Events;
 using CryptoViewer.Base.Interfaces;
 using CryptoViewer.Base.Services;
 using CryptoViewer.Utilities.GridViewUtilities;
@@ -14,13 +15,14 @@ namespace CryptoViewer.Modules.CoinBrowser.ViewModels
     internal class BrowserViewModel : Conductor<IScreen>, IBrowser
     {
         private IApiHandler _apiHandler;
-        private IShell _shell;
+        private IEventAggregator _eventAggregator;
 
         [ImportingConstructor]
-        public BrowserViewModel(IApiHandler apiHandler, IShell shell)
+        public BrowserViewModel(IApiHandler apiHandler, IEventAggregator eventAggregator)
         {
             _apiHandler = apiHandler;
-            _shell = shell;
+            _eventAggregator = eventAggregator;
+
             _gridHandler = new GridViewHandler();
         }
 
@@ -55,7 +57,7 @@ namespace CryptoViewer.Modules.CoinBrowser.ViewModels
             SelectedCoin = coin;
             details.Coin = coin;
 
-            _shell.ActivateItem((IScreen)details);
+            _eventAggregator.PublishOnUIThreadAsync(new ChangeActiveItemEvent((IScreen)details));
         }
 
         private ICoin _selectedCoin;

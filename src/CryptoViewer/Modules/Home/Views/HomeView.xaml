@@ -23,9 +23,7 @@
         <ComboBox Width="100" Height="20" Margin="10,22,0,0" VerticalAlignment="Top" VerticalContentAlignment="Center" HorizontalAlignment="Left" Grid.Row="1"
                   SelectedItem="{Binding SelectedExchanger}"
                   ItemsSource="{Binding Exchangers}"
-                  DisplayMemberPath="Name"
-                  PreviewKeyDown="ComboBox_PreviewKeyDown" 
-                  PreviewMouseWheel="ComboBox_PreviewMouseWheel" />
+                  DisplayMemberPath="Name"/>
 
         <ListView ItemsSource="{Binding Pairs}" Margin="10,10,10,10" Grid.Row="2">
             <ListView.View>

@@ -3,7 +3,6 @@ using CryptoViewer.Base.Interfaces;
 using CryptoViewer.Base.Services;
 using CryptoViewer.Handlers.CoinCap.WebResponseClasses;
 using CryptoViewer.Handlers.Models;
-using CryptoViewer.Utilities;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;

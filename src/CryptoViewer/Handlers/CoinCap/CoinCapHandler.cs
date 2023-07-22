@@ -17,7 +17,7 @@ namespace CryptoViewer.Handlers.CoinCap
     internal class CoinCapHandler : PropertyChangedBase, IApiHandler
     {
         private const string GetExchangersUrl = "https://api.coincap.io/v2/exchanges";
-        private const string GetPairsByMarketUrl = "https://api.coincap.io/v2/markets";
+        private const string GetPairsByExchangersUrl = "https://api.coincap.io/v2/markets";
         private const string GetCoinsDatatUrl = "https://api.coincap.io/v2/assets";
 
         private IWebFetcher _webFetcher;
@@ -50,15 +50,20 @@ namespace CryptoViewer.Handlers.CoinCap
             }
         }
 
-        public IEnumerable<ICoin> GetExchangers(ICoin exchanger)
+        public IEnumerable<IPair> GetExchangers(ICoin coin)
         {
             try
             {
-                return Enumerable.Empty<ICoin>();
+                string url = $"{GetCoinsDatatUrl}/{coin.Id}/markets";
+                string rawJson = _webFetcher.Fetch(url, "GET");
+
+                Root<PairByCurrency> root = JsonConvert.DeserializeObject<Root<PairByCurrency>>(rawJson, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore });
+
+                return root.Data;
             }
             catch (Exception ex)
             {
-                return Enumerable.Empty<ICoin>();
+                return Enumerable.Empty<IPair>();
             }
         }
 
@@ -93,7 +98,7 @@ namespace CryptoViewer.Handlers.CoinCap
                     { "limit", 30.ToString() }
                 };
 
-                string rawJson = _webFetcher.Fetch(GetPairsByMarketUrl, "GET", data);
+                string rawJson = _webFetcher.Fetch(GetPairsByExchangersUrl, "GET", data);
 
                 Root<InnerPair> root = JsonConvert.DeserializeObject<Root<InnerPair>>(rawJson, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore });
 

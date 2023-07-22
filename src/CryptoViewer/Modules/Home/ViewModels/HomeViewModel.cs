@@ -61,7 +61,9 @@ namespace CryptoViewer.Modules.Home.ViewModels
                 {
                     _gridHandler.CreateGridColumns((string.Empty, _pairs.First().GetType()));
                 }
+
                 _gridHandler.View = (CollectionView)CollectionViewSource.GetDefaultView(_pairs);
+
                 NotifyOfPropertyChange(nameof(Pairs));
             }
         }

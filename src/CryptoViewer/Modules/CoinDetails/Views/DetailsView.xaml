@@ -22,6 +22,21 @@
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
 
+        <Viewbox Grid.Column="1" Margin="0,0,0,90">
+            <Grid>
+                <TextBlock Width="380" Margin="0,10,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" Text="{Binding Name}" FontSize="24" FontWeight="Bold"/>
+
+                <Label Margin="29,56,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Width="76">Market Cap</Label>
+                <TextBlock Width="102" Margin="29,87,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Text="{Binding Coin.MarketCapUsd}" Grid.Column="1"/>
+
+                <Label Margin="156,56,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Width="86">Volume (24Hr)</Label>
+                <TextBlock Width="102" Margin="156,87,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Text="{Binding Coin.VolumeUsd}" Grid.Column="1"/>
+
+                <Label Margin="288,56,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Width="50">Supply</Label>
+                <TextBlock Width="102" Margin="288,87,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Text="{Binding Coin.Supply}" Grid.Column="1"/>
+            </Grid>
+        </Viewbox>
+
         <lvc:CartesianChart Series="{Binding Chart}" Grid.Row="1" Grid.ColumnSpan="2">
             <lvc:CartesianChart.AxisX>
                 <lvc:Axis Labels="{Binding Labels}"/>

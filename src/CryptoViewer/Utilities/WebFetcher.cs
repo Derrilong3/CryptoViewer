@@ -1,5 +1,7 @@
-﻿using System;
+﻿using CryptoViewer.Base.Services;
+using System;
 using System.Collections.Specialized;
+using System.ComponentModel.Composition;
 using System.IO;
 using System.Net;
 using System.Net.Cache;
@@ -8,12 +10,14 @@ using System.Threading;
 
 namespace CryptoViewer.Utilities
 {
-    internal class WebFetcher
+    [Export(typeof(IWebFetcher))]
+    internal class WebFetcher : IWebFetcher
     {
-        public static string AcceptLanguageHeader { get { return acceptLanguageHeader; } set { acceptLanguageHeader = value; } }
-        private static string acceptLanguageHeader = Thread.CurrentThread.CurrentCulture.TwoLetterISOLanguageName == "en" ? Thread.CurrentThread.CurrentCulture.ToString() + ",en;q=0.8" : Thread.CurrentThread.CurrentCulture.ToString() + "," + Thread.CurrentThread.CurrentCulture.TwoLetterISOLanguageName + ";q=0.8,en;q=0.6";
+        public string AcceptLanguageHeader { get { return acceptLanguageHeader; } set { acceptLanguageHeader = value; } }
+        private string acceptLanguageHeader = Thread.CurrentThread.CurrentCulture.TwoLetterISOLanguageName == "en" ? Thread.CurrentThread.CurrentCulture.ToString() + ",en;q=0.8" : Thread.CurrentThread.CurrentCulture.ToString() + "," + Thread.CurrentThread.CurrentCulture.TwoLetterISOLanguageName + ";q=0.8,en;q=0.6";
 
-        public static CookieContainer _cookies = new CookieContainer();
+        private CookieContainer _cookies = new CookieContainer();
+        public CookieContainer Cookies => _cookies;
 
         /// <summary>
         /// This method is using the Request method to return the full http stream from a web request as string.
@@ -25,7 +29,7 @@ namespace CryptoViewer.Utilities
         /// <param name="referer">Gets information about the URL of the client's previous request that linked to the current URL.</param>
         /// <param name="fetchError">If true, response codes other than HTTP 200 will still be returned, rather than throwing exceptions</param>
         /// <returns>The string of the http return stream.</returns>
-        public static string Fetch(string url, string method, NameValueCollection data = null, bool ajax = true, string referer = "", bool fetchError = false, NameValueCollection headers = null)
+        public string Fetch(string url, string method, NameValueCollection data = null, bool ajax = true, string referer = "", bool fetchError = false, NameValueCollection headers = null)
         {
             // Reading the response as stream and read it to the end. After that happened return the result as string.
             using (HttpWebResponse response = Request(url, method, data, ajax, referer, fetchError, headers))
@@ -55,7 +59,7 @@ namespace CryptoViewer.Utilities
         /// <param name="referer">Gets information about the URL of the client's previous request that linked to the current URL.</param>
         /// <param name="fetchError">Return response even if its status code is not 200</param>
         /// <returns>An instance of a HttpWebResponse object.</returns>
-        public static HttpWebResponse Request(string url, string method, NameValueCollection data = null, bool ajax = true, string referer = "", bool fetchError = false, NameValueCollection headers = null)
+        public HttpWebResponse Request(string url, string method, NameValueCollection data = null, bool ajax = true, string referer = "", bool fetchError = false, NameValueCollection headers = null)
         {
             //Append the data to the URL for GET - requests.
 
@@ -82,7 +86,7 @@ namespace CryptoViewer.Utilities
             request.Timeout = 50000; // Timeout after 50 seconds.
             request.CachePolicy = new HttpRequestCachePolicy(HttpRequestCacheLevel.Revalidate);
             request.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip;
-            
+
             if (headers != null)
             {
                 request.PreAuthenticate = true;

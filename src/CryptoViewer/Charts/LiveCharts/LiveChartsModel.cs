@@ -6,7 +6,7 @@ using System;
 
 namespace CryptoViewer.Charts.LiveCharts
 {
-    class LiveChartsModel : PropertyChangedBase
+    class LiveChartsModel : PropertyChangedBase, IDisposable
     {
         public SeriesCollection SeriesCollection { get; private set; }
         public string[] Labels { get; private set; }
@@ -16,7 +16,7 @@ namespace CryptoViewer.Charts.LiveCharts
             SeriesCollection = new SeriesCollection();
         }
 
-        public void InitCandleStickChart(double[][] data)
+        public void InitCandleStickChart(string name, double[][] data)
         {
             try
             {
@@ -24,6 +24,7 @@ namespace CryptoViewer.Charts.LiveCharts
 
                 CandleSeries candles = new CandleSeries();
                 candles.Values = new ChartValues<OhlcPoint>();
+                candles.Title = name;
 
                 string[] labels = new string[data.Length];
 
@@ -41,5 +42,10 @@ namespace CryptoViewer.Charts.LiveCharts
             }
         }
 
+        public void Dispose()
+        {
+            SeriesCollection.Clear();
+            Labels = null;
+        }
     }
 }

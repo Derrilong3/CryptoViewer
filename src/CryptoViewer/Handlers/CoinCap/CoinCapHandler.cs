@@ -38,7 +38,7 @@ namespace CryptoViewer.Handlers.CoinCap
             {
                 string rawJson = _webFetcher.Fetch(GetExchangersUrl, "GET");
 
-                Root<Exchanger> root = JsonConvert.DeserializeObject<Root<Exchanger>>(rawJson);
+                Root<Exchanger[]> root = JsonConvert.DeserializeObject<Root<Exchanger[]>>(rawJson);
 
                 return root.Data;
             }
@@ -57,7 +57,7 @@ namespace CryptoViewer.Handlers.CoinCap
                 string url = $"{GetCoinsDatatUrl}/{coin.Id}/markets";
                 string rawJson = _webFetcher.Fetch(url, "GET");
 
-                Root<PairByCurrency> root = JsonConvert.DeserializeObject<Root<PairByCurrency>>(rawJson, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore });
+                Root<PairByCurrency[]> root = JsonConvert.DeserializeObject<Root<PairByCurrency[]>>(rawJson, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore });
 
                 return root.Data;
             }
@@ -78,13 +78,30 @@ namespace CryptoViewer.Handlers.CoinCap
 
                 string rawJson = _webFetcher.Fetch(GetCoinsDatatUrl, "GET", data);
 
-                Root<Coin> root = JsonConvert.DeserializeObject<Root<Coin>>(rawJson, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore });
+                Root<Coin[]> root = JsonConvert.DeserializeObject<Root<Coin[]>>(rawJson, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore });
 
                 return root.Data;
             }
             catch (Exception ex)
             {
                 return Enumerable.Empty<ICoin>();
+            }
+        }
+
+        public ICoin GetCurrency(string id)
+        {
+            try
+            {
+                string url = $"{GetCoinsDatatUrl}/{id}";
+                string rawJson = _webFetcher.Fetch(url, "GET");
+
+                Root<Coin> coin = JsonConvert.DeserializeObject<Root<Coin>> (rawJson, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore });
+
+                return coin.Data;
+            }
+            catch (Exception ex)
+            {
+                return new Coin();
             }
         }
 
@@ -100,7 +117,7 @@ namespace CryptoViewer.Handlers.CoinCap
 
                 string rawJson = _webFetcher.Fetch(GetPairsByExchangersUrl, "GET", data);
 
-                Root<InnerPair> root = JsonConvert.DeserializeObject<Root<InnerPair>>(rawJson, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore });
+                Root<InnerPair[]> root = JsonConvert.DeserializeObject<Root<InnerPair[]>>(rawJson, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore });
 
                 return root.Data;
             }

@@ -21,7 +21,7 @@
             </ListBox.ItemsPanel>
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <TextBlock Text="{Binding Name}" >
+                    <TextBlock Margin="-8,-5,-8,-5" Padding="8,5,8,5" Text="{Binding Name}" FontSize="14"  >
                         <cal:Message.Attach>
                            [Event PreviewMouseDown] = [Action ClickMenu($dataContext)]
                         </cal:Message.Attach>

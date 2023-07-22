@@ -53,22 +53,9 @@ namespace CryptoViewer.Modules.CoinBrowser.ViewModels
         public void ShowDetails(ICoin coin)
         {
             var details = IoC.Get<IDetails>();
-
-            SelectedCoin = coin;
             details.Coin = coin;
 
             _eventAggregator.PublishOnUIThreadAsync(new ChangeActiveItemEvent((IScreen)details));
-        }
-
-        private ICoin _selectedCoin;
-        public ICoin SelectedCoin
-        {
-            get => _selectedCoin;
-            set
-            {
-                _selectedCoin = value;
-                NotifyOfPropertyChange(nameof(SelectedCoin));
-            }
         }
 
         #region Table filtring

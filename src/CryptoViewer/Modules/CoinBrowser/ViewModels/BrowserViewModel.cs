@@ -48,7 +48,7 @@ namespace CryptoViewer.Modules.CoinBrowser.ViewModels
             }
         }
 
-        public void GetCoin(ICoin coin)
+        public void ShowDetails(ICoin coin)
         {
             var details = IoC.Get<IDetails>();
 

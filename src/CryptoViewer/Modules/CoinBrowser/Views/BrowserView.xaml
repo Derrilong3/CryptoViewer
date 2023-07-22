@@ -23,7 +23,7 @@
             </ListView.View>
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem">
-                    <Setter Property="cal:Message.Attach" Value="[Event PreviewMouseDown] = [Action GetCoin($dataContext)]" />
+                    <Setter Property="cal:Message.Attach" Value="[Event PreviewMouseDown] = [Action ShowDetails($dataContext)]" />
                 </Style>
             </ListView.ItemContainerStyle>
         </ListView>

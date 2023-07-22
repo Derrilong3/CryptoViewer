@@ -1,4 +1,5 @@
 ﻿using Caliburn.Micro;
+using CryptoViewer.Base.Events;
 using CryptoViewer.Base.Interfaces;
 using CryptoViewer.Base.Services;
 using CryptoViewer.Utilities.GridViewUtilities;
@@ -13,11 +14,14 @@ namespace CryptoViewer.Modules.Home.ViewModels
     internal class HomeViewModel : Conductor<IScreen>, IHome
     {
         private IApiHandler _apiHandler;
+        private IEventAggregator _eventAggregator;
 
         [ImportingConstructor]
-        public HomeViewModel(IApiHandler apiHandler)
+        public HomeViewModel(IApiHandler apiHandler, IEventAggregator eventAggregator)
         {
             _apiHandler = apiHandler;
+            _eventAggregator = eventAggregator;
+
             _gridHandler = new GridViewHandler();
         }
 
@@ -75,8 +79,7 @@ namespace CryptoViewer.Modules.Home.ViewModels
             var details = IoC.Get<IDetails>();
             details.Coin = coin;
 
-            var shell = IoC.Get<IShell>();
-            shell.ActivateItem((IScreen)details);
+            _eventAggregator.PublishOnUIThreadAsync(new ChangeActiveItemEvent((IScreen)details));
         }
 
         protected override void OnViewLoaded(object view)

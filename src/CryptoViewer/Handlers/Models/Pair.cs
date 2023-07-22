@@ -27,7 +27,7 @@ namespace CryptoViewer.Handlers.Models
         [JsonProperty("quoteSymbol")]
         public string QuoteSymbol { get; set; }
 
-        [ItemColumnData("Volume (24h)", 100, "{0:N0}")]
+        [ItemColumnData("Volume (24h)", 150, "{0:N0}")]
         [JsonProperty("volumeUsd24Hr")]
         public float VolumeUsd { get; set; }
     }

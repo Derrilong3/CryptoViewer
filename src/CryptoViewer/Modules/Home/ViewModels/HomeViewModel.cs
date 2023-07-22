@@ -68,6 +68,17 @@ namespace CryptoViewer.Modules.Home.ViewModels
             }
         }
 
+        public void ShowDetails(IPair pair)
+        {
+            var coin = _apiHandler.GetCurrency(pair.BaseId);
+
+            var details = IoC.Get<IDetails>();
+            details.Coin = coin;
+
+            var shell = IoC.Get<IShell>();
+            shell.ActivateItem((IScreen)details);
+        }
+
         protected override void OnViewLoaded(object view)
         {
             var exchanger = Exchangers.First();

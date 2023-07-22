@@ -3,10 +3,15 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:CryptoViewer.Modules.Shell.Views"
+        xmlns:properties="clr-namespace:CryptoViewer.Properties"
         xmlns:cal="http://www.caliburnproject.org"
         mc:Ignorable="d"
-        Title="ShellView" Height="450" Width="800">
+        Title="CryptoView"
+        Height="{Binding Source={x:Static properties:Settings.Default}, Path=WindowHeight, Mode=TwoWay}"
+        Width="{Binding Source={x:Static properties:Settings.Default}, Path=WindowWidth, Mode=TwoWay}"
+        MinHeight="450"
+        MinWidth="800">
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>

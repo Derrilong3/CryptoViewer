@@ -2,6 +2,8 @@
 using CryptoViewer.Base.Services;
 using CryptoViewer.Modules.MainMenu;
 using System.ComponentModel.Composition;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace CryptoViewer.Modules.Shell.ViewModels
 {
@@ -26,6 +28,13 @@ namespace CryptoViewer.Modules.Shell.ViewModels
                 return;
 
             ActivateItemAsync(obj);
+        }
+
+        protected override Task OnDeactivateAsync(bool close, CancellationToken cancellationToken)
+        {
+            Properties.Settings.Default.Save();
+
+            return base.OnDeactivateAsync(close, cancellationToken);
         }
     }
 }

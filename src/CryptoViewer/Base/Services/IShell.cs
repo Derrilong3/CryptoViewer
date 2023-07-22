@@ -1,5 +1,6 @@
 ﻿using Caliburn.Micro;
 using CryptoViewer.Modules.MainMenu;
+using System.Threading.Tasks;
 
 namespace CryptoViewer.Base.Services
 {
@@ -8,6 +9,6 @@ namespace CryptoViewer.Base.Services
         IScreen ActiveItem { get; }
         IMenu MainMenu { get; }
 
-        void ActivateItem(IScreen obj);
+        Task ActivateItem(IScreen obj);
     }
 }

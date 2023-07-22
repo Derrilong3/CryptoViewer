@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:CryptoViewer.Modules.CoinBrowser.Views"
              xmlns:u="clr-namespace:CryptoViewer.Utilities.GridViewUtilities"
+             xmlns:cal="http://caliburnmicro.com"
              mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800">
 
@@ -18,8 +19,13 @@
 
         <ListView ItemsSource="{Binding Currencies}" SelectedItem="{Binding SelectedCoin}" Margin="10,10,10,10" Grid.Row="1">
             <ListView.View>
-                <GridView u:GridViewColumnsBehavior.Columns = "{Binding GridHandler.Columns}"/>
+                <GridView  u:GridViewColumnsBehavior.Columns = "{Binding GridHandler.Columns}"/>
             </ListView.View>
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="cal:Message.Attach" Value="[Event PreviewMouseDown] = [Action GetCoin($dataContext)]" />
+                </Style>
+            </ListView.ItemContainerStyle>
         </ListView>
     </Grid>
 </UserControl>

@@ -48,15 +48,24 @@ namespace CryptoViewer.Modules.CoinBrowser.ViewModels
             }
         }
 
+        public void GetCoin(ICoin coin)
+        {
+            var details = IoC.Get<IDetails>();
+
+            SelectedCoin = coin;
+            details.Coin = coin;
+
+            _shell.ActivateItem((IScreen)details);
+        }
+
+        private ICoin _selectedCoin;
         public ICoin SelectedCoin
         {
-            get => null;
+            get => _selectedCoin;
             set
             {
-                var details = IoC.Get<IDetails>();
-
-                details.Coin = value;
-                _shell.ActivateItem((IScreen)details);
+                _selectedCoin = value;
+                NotifyOfPropertyChange(nameof(SelectedCoin));
             }
         }
 

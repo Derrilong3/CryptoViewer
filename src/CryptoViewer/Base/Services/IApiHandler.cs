@@ -9,5 +9,6 @@ namespace CryptoViewer.Base.Services
         IEnumerable<ICoin> GetExchangers(ICoin exchanger);
         IEnumerable<ICoin> GetCurrencies();
         IEnumerable<IPair> GetCurrencies(IExchanger exchanger);
+        double[][] GetOHLC(ICoin coin, int interval);
     }
 }

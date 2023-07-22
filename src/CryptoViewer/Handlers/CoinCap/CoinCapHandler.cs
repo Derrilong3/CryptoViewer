@@ -99,5 +99,30 @@ namespace CryptoViewer.Handlers.CoinCap
                 return Enumerable.Empty<InnerPair>();
             }
         }
+
+        public double[][] GetOHLC(ICoin coin, int interval)
+        {
+            try
+            {
+                string getOHCLUrl = $"https://api.coingecko.com/api/v3/coins/{coin.Id}/ohlc";
+
+                NameValueCollection data = new NameValueCollection
+                {
+                    { "vs_currency", "usd" },
+                    { "days", interval.ToString() }
+                };
+
+                string rawJson = WebFetcher.Fetch(getOHCLUrl, "GET", data);
+
+                double[][] result = JsonConvert.DeserializeObject<double[][]>(rawJson, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore });
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+                return new double[0][];
+            }
+        }
     }
 }

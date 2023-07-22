@@ -106,16 +106,8 @@ namespace CryptoViewer.Handlers.CoinCap
         {
             try
             {
-                string rawJson;
-
                 if (_coinGeckos == null)
-                {
-                    string getCoinList = "https://api.coingecko.com/api/v3/coins/list";
-
-                    rawJson = WebFetcher.Fetch(getCoinList, "GET");
-
-                    _coinGeckos = JsonConvert.DeserializeObject<Coin[]>(rawJson, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore });
-                }
+                    _coinGeckos = GetCoinGecko();
 
                 string id = _coinGeckos.First(x => x.Symbol.ToLower() == coin.Symbol.ToLower()).Id;
 
@@ -127,7 +119,7 @@ namespace CryptoViewer.Handlers.CoinCap
                     { "days", interval.ToString() }
                 };
 
-                rawJson = WebFetcher.Fetch(getOHCLUrl, "GET", data);
+                string rawJson = WebFetcher.Fetch(getOHCLUrl, "GET", data);
 
                 double[][] result = JsonConvert.DeserializeObject<double[][]>(rawJson, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore });
 
@@ -138,6 +130,17 @@ namespace CryptoViewer.Handlers.CoinCap
                 Debug.WriteLine(ex);
                 return new double[0][];
             }
+        }
+
+        private IEnumerable<ICoin> GetCoinGecko()
+        {
+            string getCoinList = "https://api.coingecko.com/api/v3/coins/list";
+
+            string rawJson = WebFetcher.Fetch(getCoinList, "GET");
+
+            Coin[] coins = JsonConvert.DeserializeObject<Coin[]>(rawJson, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore });
+
+            return coins;
         }
     }
 }

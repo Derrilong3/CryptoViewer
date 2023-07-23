@@ -17,7 +17,7 @@ namespace CryptoViewer.Handlers.Models
         [JsonProperty("id")]
         public string Id { get; set; }
 
-        [ItemColumnData("Price")]
+        [ItemColumnData("Price", 100, "{0:0.###############}")]
         [JsonProperty("priceUsd")]
         public float Price { get; set; }
 
@@ -36,11 +36,11 @@ namespace CryptoViewer.Handlers.Models
         [JsonProperty("volumeUsd24Hr")]
         public float VolumeUsd { get; set; }
 
-        [ItemColumnData("Change (24Hr)", 150, "{0:0.##}")]
+        [ItemColumnData("Change (24Hr)", 150, "{0:0.##}%")]
         [JsonProperty("changePercent24Hr")]
         public float ChangePercent { get; set; }
 
-        [ItemColumnData("VWAP (24Hr)", 150, "{0:N0}")]
+        [ItemColumnData("VWAP (24Hr)", 150, "{0:0.###############}")]
         [JsonProperty("vwap24Hr")]
         public float VWAP { get; set; }
     }

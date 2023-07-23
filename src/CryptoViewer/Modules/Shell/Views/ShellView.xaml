@@ -6,6 +6,8 @@
         xmlns:properties="clr-namespace:CryptoViewer.Properties"
         xmlns:cal="http://www.caliburnproject.org"
         mc:Ignorable="d"
+        Background="{DynamicResource MaterialDesignPaper}"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
         Title="CryptoView"
         Height="{Binding Source={x:Static properties:Settings.Default}, Path=WindowHeight, Mode=TwoWay}"
         Width="{Binding Source={x:Static properties:Settings.Default}, Path=WindowWidth, Mode=TwoWay}"

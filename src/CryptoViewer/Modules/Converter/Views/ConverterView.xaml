@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:CryptoViewer.Modules.Converter.Views"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <Grid Background="#FFF5F5F5">
+    <Grid>
 
         <Viewbox>
             <Grid Height="450">

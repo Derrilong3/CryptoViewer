@@ -61,7 +61,7 @@ namespace CryptoViewer.Modules.CoinDetails.ViewModels
             {
                 _pairs = value;
 
-                if (_gridHandler.View == null && _pairs.Count() > 0)
+                if (_gridHandler.Columns == null && _pairs.Count() > 0)
                 {
                     _gridHandler.CreateGridColumns((string.Empty, _pairs.First().GetType()));
                 }

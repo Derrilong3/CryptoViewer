@@ -3,6 +3,7 @@ using CryptoViewer.Base.Events;
 using CryptoViewer.Base.Interfaces;
 using CryptoViewer.Base.Services;
 using CryptoViewer.Utilities.GridViewUtilities;
+using MaterialDesignThemes.Wpf;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
@@ -15,6 +16,7 @@ namespace CryptoViewer.Modules.Home.ViewModels
     {
         private IApiHandler _apiHandler;
         private IEventAggregator _eventAggregator;
+        private bool _isDark = false;
 
         [ImportingConstructor]
         public HomeViewModel(IApiHandler apiHandler, IEventAggregator eventAggregator)
@@ -80,6 +82,16 @@ namespace CryptoViewer.Modules.Home.ViewModels
             details.Coin = coin;
 
             _eventAggregator.PublishOnUIThreadAsync(new ChangeActiveItemEvent((IScreen)details));
+        }
+
+        public void ChangeTheme()
+        {
+            _isDark = !_isDark;
+            PaletteHelper _paletteHelper = new PaletteHelper();
+            ITheme theme = _paletteHelper.GetTheme();
+            IBaseTheme baseTheme = _isDark ? new MaterialDesignDarkTheme() : (IBaseTheme)new MaterialDesignLightTheme();
+            theme.SetBaseTheme(baseTheme);
+            _paletteHelper.SetTheme(theme);
         }
 
         protected override void OnViewLoaded(object view)

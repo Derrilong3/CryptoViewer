@@ -10,6 +10,7 @@ using System.Collections.Specialized;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace CryptoViewer.Handlers.CoinCap
 {
@@ -20,26 +21,24 @@ namespace CryptoViewer.Handlers.CoinCap
         private const string GetPairsByExchangersUrl = "https://api.coincap.io/v2/markets";
         private const string GetCoinsDatatUrl = "https://api.coincap.io/v2/assets";
 
-        private IWebFetcher _webFetcher;
+        private IRestClient _restClient;
 
         private IEnumerable<ICoin> _coinGeckos;
         private IEnumerable<ICoin> _coinsCap;
         private Dictionary<string, Dictionary<string, double[][]>> _candles;
 
         [ImportingConstructor]
-        public CoinCapHandler(IWebFetcher webFetcher)
+        public CoinCapHandler(IRestClient client)
         {
             _candles = new Dictionary<string, Dictionary<string, double[][]>>();
-            _webFetcher = webFetcher;
+            _restClient = client;
         }
 
-        public IEnumerable<IExchanger> GetExchangers()
+        public async Task<IEnumerable<IExchanger>> GetExchangers()
         {
             try
             {
-                string rawJson = _webFetcher.Fetch(GetExchangersUrl, "GET");
-
-                Root<Exchanger[]> root = JsonConvert.DeserializeObject<Root<Exchanger[]>>(rawJson);
+                Root<Exchanger[]> root = await _restClient.GetAsync<Root<Exchanger[]>>(GetExchangersUrl);
 
                 return root.Data;
             }
@@ -51,14 +50,12 @@ namespace CryptoViewer.Handlers.CoinCap
             }
         }
 
-        public IEnumerable<IPair> GetExchangers(ICoin coin)
+        public async Task<IEnumerable<IPair>> GetExchangers(ICoin coin)
         {
             try
             {
                 string url = $"{GetCoinsDatatUrl}/{coin.Id}/markets";
-                string rawJson = _webFetcher.Fetch(url, "GET");
-
-                Root<PairByCurrency[]> root = JsonConvert.DeserializeObject<Root<PairByCurrency[]>>(rawJson, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore });
+                Root<PairByCurrency[]> root = await _restClient.GetAsync<Root<PairByCurrency[]>>(url);
 
                 return root.Data;
             }
@@ -68,7 +65,7 @@ namespace CryptoViewer.Handlers.CoinCap
             }
         }
 
-        public IEnumerable<ICoin> GetCurrencies()
+        public async Task<IEnumerable<ICoin>> GetCurrencies()
         {
             try
             {
@@ -80,9 +77,7 @@ namespace CryptoViewer.Handlers.CoinCap
                     { "limit", "2000" }
                 };
 
-                string rawJson = _webFetcher.Fetch(GetCoinsDatatUrl, "GET", data);
-
-                Root<Coin[]> root = JsonConvert.DeserializeObject<Root<Coin[]>>(rawJson, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore });
+                Root<Coin[]> root = await _restClient.GetAsync<Root<Coin[]>>(GetCoinsDatatUrl, data);
 
                 _coinsCap = root.Data;
 
@@ -94,14 +89,12 @@ namespace CryptoViewer.Handlers.CoinCap
             }
         }
 
-        public ICoin GetCurrency(string id)
+        public async Task<ICoin> GetCurrency(string id)
         {
             try
             {
                 string url = $"{GetCoinsDatatUrl}/{id}";
-                string rawJson = _webFetcher.Fetch(url, "GET");
-
-                Root<Coin> coin = JsonConvert.DeserializeObject<Root<Coin>>(rawJson, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore });
+                Root<Coin> coin = await _restClient.GetAsync<Root<Coin>>(url);
 
                 return coin.Data;
             }
@@ -111,7 +104,7 @@ namespace CryptoViewer.Handlers.CoinCap
             }
         }
 
-        public IEnumerable<IPair> GetCurrencies(IExchanger exchanger)
+        public async Task<IEnumerable<IPair>> GetCurrencies(IExchanger exchanger)
         {
             try
             {
@@ -121,9 +114,7 @@ namespace CryptoViewer.Handlers.CoinCap
                     { "limit", 30.ToString() }
                 };
 
-                string rawJson = _webFetcher.Fetch(GetPairsByExchangersUrl, "GET", data);
-
-                Root<InnerPair[]> root = JsonConvert.DeserializeObject<Root<InnerPair[]>>(rawJson, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore });
+                Root<InnerPair[]> root = await _restClient.GetAsync<Root<InnerPair[]>>(GetPairsByExchangersUrl, data);
 
                 return root.Data;
             }
@@ -134,12 +125,12 @@ namespace CryptoViewer.Handlers.CoinCap
             }
         }
 
-        public double[][] GetOHLC(ICoin coin, string interval)
+        public async Task<double[][]> GetOHLC(ICoin coin, string interval)
         {
             try
             {
                 if (_coinGeckos == null)
-                    _coinGeckos = GetCoinGecko();
+                    _coinGeckos = await GetCoinGecko();
 
                 string id = _coinGeckos.First(x => x.Symbol.ToLower() == coin.Symbol.ToLower()).Id;
 
@@ -156,9 +147,7 @@ namespace CryptoViewer.Handlers.CoinCap
                     { "days", interval }
                 };
 
-                string rawJson = _webFetcher.Fetch(getOHCLUrl, "GET", data);
-
-                double[][] result = JsonConvert.DeserializeObject<double[][]>(rawJson, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore });
+                double[][] result = await _restClient.GetAsync<double[][]>(getOHCLUrl, data);
 
                 if (_candles.TryGetValue(id, out intervals))
                 {
@@ -183,13 +172,11 @@ namespace CryptoViewer.Handlers.CoinCap
             }
         }
 
-        private IEnumerable<ICoin> GetCoinGecko()
+        private async Task<IEnumerable<ICoin>> GetCoinGecko()
         {
             string getCoinList = "https://api.coingecko.com/api/v3/coins/list";
 
-            string rawJson = _webFetcher.Fetch(getCoinList, "GET");
-
-            Coin[] coins = JsonConvert.DeserializeObject<Coin[]>(rawJson, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore });
+            Coin[] coins = await _restClient.GetAsync<Coin[]>(getCoinList);
 
             return coins;
         }

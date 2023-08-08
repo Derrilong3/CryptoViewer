@@ -4,6 +4,7 @@ using CryptoViewer.Base.Services;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace CryptoViewer.Modules.Converter.ViewModels
 {
@@ -18,7 +19,6 @@ namespace CryptoViewer.Modules.Converter.ViewModels
             _apiHandler = apiHandler;
         }
 
-
         private IEnumerable<ICoin> _currencies;
         public IEnumerable<ICoin> Currencies
         {
@@ -26,10 +26,16 @@ namespace CryptoViewer.Modules.Converter.ViewModels
             {
                 if (_currencies == null)
                 {
-                    _currencies = _apiHandler.GetCurrencies();
+                    GetCurrencies();
                 }
 
                 return _currencies;
+            }
+            private set
+            {
+                _currencies = value;
+
+                NotifyOfPropertyChange(nameof(Currencies));
             }
         }
 
@@ -98,8 +104,10 @@ namespace CryptoViewer.Modules.Converter.ViewModels
             }
         }
 
-        protected override void OnViewLoaded(object view)
+        private async Task GetCurrencies()
         {
+            Currencies = await _apiHandler.GetCurrencies();
+
             FirstCoin = Currencies.FirstOrDefault();
             SecondCoin = Currencies.FirstOrDefault();
         }

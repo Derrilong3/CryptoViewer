@@ -46,7 +46,7 @@ namespace CryptoViewer.Modules.CoinDetails.ViewModels
 
                 _coin = value;
 
-                Pairs = _apiHandler.GetExchangers(_coin);
+                GetPairs();
 
                 NotifyOfPropertyChange(nameof(Coin));
                 NotifyOfPropertyChange(nameof(Name));
@@ -56,36 +56,47 @@ namespace CryptoViewer.Modules.CoinDetails.ViewModels
         private IEnumerable<IPair> _pairs;
         public IEnumerable<IPair> Pairs
         {
-            get => _pairs;
-            set
+            get
+            {
+                if (_pairs == null)
+                    return Enumerable.Empty<IPair>();
+
+                return _pairs;
+            }
+            private set
             {
                 _pairs = value;
-
-                if (_gridHandler.Columns == null && _pairs.Count() > 0)
-                {
-                    _gridHandler.CreateGridColumns((string.Empty, _pairs.First().GetType()));
-                }
-
-                _gridHandler.View = (CollectionView)CollectionViewSource.GetDefaultView(_pairs);
 
                 NotifyOfPropertyChange(nameof(Pairs));
             }
         }
 
-        public void IntervalValue(string interval)
+        private async Task GetPairs()
+        {
+            Pairs = await _apiHandler.GetExchangers(_coin);
+
+            if (_gridHandler.Columns == null && _pairs.Count() > 0)
+            {
+                _gridHandler.CreateGridColumns((string.Empty, _pairs.First().GetType()));
+            }
+
+            _gridHandler.View = (CollectionView)CollectionViewSource.GetDefaultView(_pairs);
+        }
+
+        public async Task IntervalValue(string interval)
         {
             if (Coin == null)
                 return;
 
-            double[][] data = _apiHandler.GetOHLC(Coin, interval);
+            double[][] data = await _apiHandler.GetOHLC(Coin, interval);
             _chart.InitCandleStickChart(Coin.Name, data);
 
             NotifyOfPropertyChange(nameof(Labels));
         }
 
-        protected override void OnViewReady(object view)
+        protected override async void OnViewReady(object view)
         {
-            IntervalValue("1");
+            await IntervalValue("1");
         }
 
         protected override Task OnDeactivateAsync(bool close, CancellationToken cancellationToken)

@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Data;
 
 namespace CryptoViewer.Modules.CoinBrowser.ViewModels
@@ -36,26 +37,37 @@ namespace CryptoViewer.Modules.CoinBrowser.ViewModels
             {
                 if (_currencies == null)
                 {
-                    _currencies = _apiHandler.GetCurrencies();
-
-                    if (_currencies.Count() > 0)
-                    {
-                        _gridHandler.CreateGridColumns((string.Empty, _currencies.First().GetType()));
-                        _gridHandler.View = (CollectionView)CollectionViewSource.GetDefaultView(_currencies);
-                        _gridHandler.View.Filter = TextFilter;
-                    }
+                    GetCurrencies();
                 }
 
                 return _currencies;
             }
+            private set
+            {
+                _currencies = value;
+
+                NotifyOfPropertyChange(nameof(Currencies));
+            }
         }
 
-        public void ShowDetails(ICoin coin)
+        private async Task GetCurrencies()
+        {
+            Currencies = await _apiHandler.GetCurrencies();
+
+            if (_currencies.Count() > 0)
+            {
+                _gridHandler.CreateGridColumns((string.Empty, _currencies.First().GetType()));
+                _gridHandler.View = (CollectionView)CollectionViewSource.GetDefaultView(_currencies);
+                _gridHandler.View.Filter = TextFilter;
+            }
+        }
+
+        public async Task ShowDetails(ICoin coin)
         {
             var details = IoC.Get<IDetails>();
             details.Coin = coin;
 
-            _eventAggregator.PublishOnUIThreadAsync(new ChangeActiveItemEvent((IScreen)details));
+            await _eventAggregator.PublishOnUIThreadAsync(new ChangeActiveItemEvent((IScreen)details));
         }
 
         #region Table filtring

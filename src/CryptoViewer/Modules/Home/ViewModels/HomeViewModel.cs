@@ -48,7 +48,7 @@ namespace CryptoViewer.Modules.Home.ViewModels
             get => _selectedExchanger;
             set
             {
-                if (_selectedExchanger == value)
+                if (_selectedExchanger != null)
                     return;
 
                 _selectedExchanger = value;
@@ -106,11 +106,7 @@ namespace CryptoViewer.Modules.Home.ViewModels
         protected override async void OnViewLoaded(object view)
         {
             Exchangers = await _apiHandler.GetExchangers();
-
-            var exchanger = _exchangers.First();
-
-            if (exchanger != null)
-                SelectedExchanger = exchanger;
+            SelectedExchanger = _exchangers.First();
         }
     }
 }

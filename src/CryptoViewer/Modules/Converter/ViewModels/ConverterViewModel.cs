@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 namespace CryptoViewer.Modules.Converter.ViewModels
 {
     [Export(typeof(IConverter))]
-    internal class ConverterViewModel : Conductor<IScreen>, IConverter
+    internal class ConverterViewModel : Screen, IConverter
     {
-        private IApiHandler _apiHandler;
+        private readonly IApiHandler _apiHandler;
 
         [ImportingConstructor]
         public ConverterViewModel(IApiHandler apiHandler)
@@ -22,15 +22,7 @@ namespace CryptoViewer.Modules.Converter.ViewModels
         private IEnumerable<ICoin> _currencies;
         public IEnumerable<ICoin> Currencies
         {
-            get
-            {
-                if (_currencies == null)
-                {
-                    GetCurrencies();
-                }
-
-                return _currencies;
-            }
+            get => _currencies;
             private set
             {
                 _currencies = value;
@@ -71,8 +63,7 @@ namespace CryptoViewer.Modules.Converter.ViewModels
             get => _firstAmountText;
             set
             {
-                float result;
-                if (float.TryParse(value, out result))
+                if (float.TryParse(value, out var result))
                 {
                     FirstAmount = result;
                 }
@@ -104,12 +95,12 @@ namespace CryptoViewer.Modules.Converter.ViewModels
             }
         }
 
-        private async Task GetCurrencies()
+        protected override async void OnViewLoaded(object view)
         {
             Currencies = await _apiHandler.GetCurrencies();
 
             FirstCoin = Currencies.FirstOrDefault();
-            SecondCoin = Currencies.FirstOrDefault();
+            SecondCoin = FirstCoin;
         }
     }
 }

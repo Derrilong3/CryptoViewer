@@ -11,18 +11,14 @@ namespace CryptoViewer.Modules.Shell.ViewModels
     [Export(typeof(IShell))]
     internal class ShellViewModel : Conductor<IScreen>.Collection.OneActive, IShell, IHandle<ChangeActiveItemEvent>
     {
-        private IEventAggregator _eventAggregator;
-
-        private IMenu _menu;
-        public IMenu MainMenu => _menu;
+        public IMenu MainMenu { get; }
 
         [ImportingConstructor]
         public ShellViewModel(IMenu menu, IEventAggregator eventAggregator)
         {
-            _menu = menu;
-            _eventAggregator = eventAggregator;
+            MainMenu = menu;
 
-            _eventAggregator.SubscribeOnPublishedThread(this);
+            eventAggregator.SubscribeOnPublishedThread(this);
         }
 
         public Task ActivateItem(IScreen obj)

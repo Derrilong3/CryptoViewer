@@ -33,7 +33,7 @@
             </ListView.View>
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem" BasedOn="{StaticResource MaterialDesignGridViewItem}">
-                    <Setter Property="cal:Message.Attach" Value="[Event PreviewMouseDown] = [Action ShowDetails($dataContext)]" />
+                    <Setter Property="cal:Message.Attach" Value="[Event PreviewMouseDown] = [Action ShowDetailsAsync($dataContext)]" />
                 </Style>
             </ListView.ItemContainerStyle>
         </ListView>

@@ -48,7 +48,7 @@ namespace CryptoViewer.Modules.Home.ViewModels
             get => _selectedExchanger;
             set
             {
-                if (_selectedExchanger != null)
+                if (value == null)
                     return;
 
                 _selectedExchanger = value;
@@ -83,7 +83,7 @@ namespace CryptoViewer.Modules.Home.ViewModels
             GridHandler.View = (CollectionView)CollectionViewSource.GetDefaultView(_pairs);
         }
 
-        public async Task ShowDetails(IPair pair)
+        public async Task ShowDetailsAsync(IPair pair)
         {
             var coin = await _apiHandler.GetCurrency(pair.BaseId);
 

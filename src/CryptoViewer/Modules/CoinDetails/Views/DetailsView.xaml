@@ -19,7 +19,6 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition />
             <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
 
         <Viewbox Grid.Column="1" Margin="0,0,0,1">
@@ -34,31 +33,32 @@
 
                 <Label Margin="288,56,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Width="50">Supply</Label>
                 <TextBlock Width="102" Margin="288,87,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Text="{Binding Coin.Supply, StringFormat={}{0:N0}}" Grid.Column="1"/>
-                <Button Height="40" Width="50" Margin="0,0,340,0" VerticalAlignment="Bottom" HorizontalAlignment="Right"
-                Content="1D"
-                cal:Message.Attach="[Event Click] = [Action IntervalValue('1')]"/>
-                <Button Height="40" Width="50" Margin="0,0,285,0" VerticalAlignment="Bottom" HorizontalAlignment="Right"
-                Content="1W"
-                cal:Message.Attach="[Event Click] = [Action IntervalValue('7')]"/>
-                <Button Height="40" Width="50" Margin="0,0,230,0" VerticalAlignment="Bottom" HorizontalAlignment="Right"
-                Content="1M"
-                cal:Message.Attach="[Event Click] = [Action IntervalValue('30')]"/>
-                <Button Height="40" Width="55" Margin="165,146,0,0" VerticalAlignment="Top" HorizontalAlignment="Left"
-                Content="3M"
-                cal:Message.Attach="[Event Click] = [Action IntervalValue('90')]"/>
-                <Button Height="40" Width="55" Margin="0,0,110,0" VerticalAlignment="Bottom" HorizontalAlignment="Right"
-                Content="6M"
-                cal:Message.Attach="[Event Click] = [Action IntervalValue('180')]"/>
-                <Button Height="40" Width="50" Margin="0,0,55,0" VerticalAlignment="Bottom" HorizontalAlignment="Right"
-                Content="1Y"
-                cal:Message.Attach="[Event Click] = [Action IntervalValue('365')]"/>
-                <Button Height="40" Width="50" Margin="0,0,1,0" VerticalAlignment="Bottom" HorizontalAlignment="Right"
-                Content="All"
-                cal:Message.Attach="[Event Click] = [Action IntervalValue('max')]"/>
+
+                <Button Height="36" Width="45" Margin="0,0,340,0" VerticalAlignment="Bottom" HorizontalAlignment="Right"
+                        Content="1D" FontSize="10"
+                        cal:Message.Attach="Action IntervalValueAsync('1')"/>
+                <Button Height="36" Width="45" Margin="0,0,286,0" VerticalAlignment="Bottom" HorizontalAlignment="Right"
+                        Content="1W" FontSize="10"
+                        cal:Message.Attach="Action IntervalValueAsync('7')"/>
+                <Button Height="36" Width="45" Margin="0,0,232,0" VerticalAlignment="Bottom" HorizontalAlignment="Right"
+                        Content="1M" FontSize="10"
+                        cal:Message.Attach="Action IntervalValueAsync('30')"/>
+                <Button Height="36" Width="45" Margin="0,0,178,0" VerticalAlignment="Bottom" HorizontalAlignment="Right"
+                        Content="3M" FontSize="10"
+                        cal:Message.Attach="Action IntervalValueAsync('90')"/>
+                <Button Height="36" Width="45" Margin="0,0,124,0" VerticalAlignment="Bottom" HorizontalAlignment="Right"
+                        Content="6M" FontSize="10"
+                        cal:Message.Attach="IntervalValueAsync('180')"/>
+                <Button Height="36" Width="45" Margin="0,0,70,0" VerticalAlignment="Bottom" HorizontalAlignment="Right"
+                        Content="1Y" FontSize="10"
+                        cal:Message.Attach="Action IntervalValueAsync('365')"/>
+                <Button Height="36" Width="45" Margin="0,0,16,0" VerticalAlignment="Bottom" HorizontalAlignment="Right"
+                        Content="All" FontSize="10"
+                        cal:Message.Attach="Action IntervalValueAsync('max')"/>
             </Grid>
         </Viewbox>
 
-        <lvc:CartesianChart Series="{Binding Chart}" Grid.Row="1" Grid.ColumnSpan="2">
+        <lvc:CartesianChart Series="{Binding Chart}" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">
             <lvc:CartesianChart.AxisX>
                 <lvc:Axis Labels="{Binding Labels}"/>
             </lvc:CartesianChart.AxisX>

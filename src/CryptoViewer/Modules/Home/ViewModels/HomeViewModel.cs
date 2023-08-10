@@ -13,11 +13,11 @@ using System.Windows.Data;
 namespace CryptoViewer.Modules.Home.ViewModels
 {
     [Export(typeof(IHome))]
-    internal class HomeViewModel : Conductor<IScreen>, IHome
+    internal class HomeViewModel : Screen, IHome
     {
-        private IApiHandler _apiHandler;
-        private IEventAggregator _eventAggregator;
-        private bool _isDark = false;
+        private readonly IApiHandler _apiHandler;
+        private readonly IEventAggregator _eventAggregator;
+        private bool _isDark;
 
         [ImportingConstructor]
         public HomeViewModel(IApiHandler apiHandler, IEventAggregator eventAggregator)
@@ -25,24 +25,15 @@ namespace CryptoViewer.Modules.Home.ViewModels
             _apiHandler = apiHandler;
             _eventAggregator = eventAggregator;
 
-            _gridHandler = new GridViewHandler();
+            GridHandler = new GridViewHandler();
         }
 
-        private GridViewHandler _gridHandler;
-        public GridViewHandler GridHandler => _gridHandler;
+        public GridViewHandler GridHandler { get; }
 
         private IEnumerable<IExchanger> _exchangers;
         public IEnumerable<IExchanger> Exchangers
         {
-            get
-            {
-                if (_exchangers == null)
-                {
-                    GetExchangers();
-                }
-
-                return _exchangers;
-            }
+            get => _exchangers;
             private set
             {
                 _exchangers = value;
@@ -62,50 +53,20 @@ namespace CryptoViewer.Modules.Home.ViewModels
 
                 _selectedExchanger = value;
 
-                GetPairs();
-
                 NotifyOfPropertyChange(nameof(SelectedExchanger));
             }
         }
 
-        public IEnumerable<IPair> _pairs;
+        private IEnumerable<IPair> _pairs;
         public IEnumerable<IPair> Pairs
         {
-            get
-            {
-                if (_pairs == null)
-                    return Enumerable.Empty<IPair>();
-
-                return _pairs;
-            }
+            get => _pairs ?? Enumerable.Empty<IPair>();
             private set
             {
                 _pairs = value;
 
                 NotifyOfPropertyChange(nameof(Pairs));
             }
-        }
-
-        private async Task GetExchangers()
-        {
-            Exchangers = await _apiHandler.GetExchangers();
-
-            var exchanger = _exchangers.First();
-
-            if (exchanger != null)
-                SelectedExchanger = exchanger;
-        }
-
-        private async Task GetPairs()
-        {
-            Pairs = await _apiHandler.GetCurrencies(_selectedExchanger);
-
-            if (_gridHandler.Columns == null && _pairs.Count() > 0)
-            {
-                _gridHandler.CreateGridColumns((string.Empty, _pairs.First().GetType()));
-            }
-
-            _gridHandler.View = (CollectionView)CollectionViewSource.GetDefaultView(_pairs);
         }
 
         public async Task ShowDetails(IPair pair)
@@ -126,6 +87,25 @@ namespace CryptoViewer.Modules.Home.ViewModels
             IBaseTheme baseTheme = _isDark ? new MaterialDesignDarkTheme() : (IBaseTheme)new MaterialDesignLightTheme();
             theme.SetBaseTheme(baseTheme);
             _paletteHelper.SetTheme(theme);
+        }
+
+        protected override async void OnViewLoaded(object view)
+        {
+            Exchangers = await _apiHandler.GetExchangers();
+
+            var exchanger = _exchangers.First();
+
+            if (exchanger != null)
+                SelectedExchanger = exchanger;
+
+            Pairs = await _apiHandler.GetCurrencies(_selectedExchanger);
+
+            if (GridHandler.Columns == null && _pairs.Any())
+            {
+                GridHandler.CreateGridColumns((string.Empty, _pairs.First().GetType()));
+            }
+
+            GridHandler.View = (CollectionView)CollectionViewSource.GetDefaultView(_pairs);
         }
     }
 }

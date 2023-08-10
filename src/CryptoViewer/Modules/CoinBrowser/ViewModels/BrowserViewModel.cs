@@ -13,10 +13,10 @@ using System.Windows.Data;
 namespace CryptoViewer.Modules.CoinBrowser.ViewModels
 {
     [Export(typeof(IBrowser))]
-    internal class BrowserViewModel : Conductor<IScreen>, IBrowser
+    internal class BrowserViewModel : Screen, IBrowser
     {
-        private IApiHandler _apiHandler;
-        private IEventAggregator _eventAggregator;
+        private readonly IApiHandler _apiHandler;
+        private readonly IEventAggregator _eventAggregator;
 
         [ImportingConstructor]
         public BrowserViewModel(IApiHandler apiHandler, IEventAggregator eventAggregator)
@@ -24,24 +24,15 @@ namespace CryptoViewer.Modules.CoinBrowser.ViewModels
             _apiHandler = apiHandler;
             _eventAggregator = eventAggregator;
 
-            _gridHandler = new GridViewHandler();
+            GridHandler = new GridViewHandler();
         }
 
-        private GridViewHandler _gridHandler;
-        public GridViewHandler GridHandler => _gridHandler;
+        public GridViewHandler GridHandler { get; }
 
         private IEnumerable<ICoin> _currencies;
         public IEnumerable<ICoin> Currencies
         {
-            get
-            {
-                if (_currencies == null)
-                {
-                    GetCurrencies();
-                }
-
-                return _currencies;
-            }
+            get => _currencies;
             private set
             {
                 _currencies = value;
@@ -50,24 +41,28 @@ namespace CryptoViewer.Modules.CoinBrowser.ViewModels
             }
         }
 
-        private async Task GetCurrencies()
-        {
-            Currencies = await _apiHandler.GetCurrenciesAsync();
-
-            if (_currencies.Count() > 0)
-            {
-                _gridHandler.CreateGridColumns((string.Empty, _currencies.First().GetType()));
-                _gridHandler.View = (CollectionView)CollectionViewSource.GetDefaultView(_currencies);
-                _gridHandler.View.Filter = TextFilter;
-            }
-        }
-
-        public async Task ShowDetails(ICoin coin)
+        public async Task ShowDetailsAsync(ICoin coin)
         {
             var details = IoC.Get<IDetails>();
             details.Coin = coin;
 
             await _eventAggregator.PublishOnUIThreadAsync(new ChangeActiveItemEvent((IScreen)details));
+        }
+
+        protected override async void OnViewLoaded(object view)
+        {
+            Currencies = await _apiHandler.GetCurrenciesAsync();
+
+            if (!_currencies.Any())
+                return;
+
+            GridHandler.CreateGridColumns((string.Empty, _currencies
+                .First()
+                .GetType()
+                ));
+
+            GridHandler.View = (CollectionView)CollectionViewSource.GetDefaultView(_currencies);
+            GridHandler.View.Filter = TextFilter;
         }
 
         #region Table filtring
@@ -79,15 +74,15 @@ namespace CryptoViewer.Modules.CoinBrowser.ViewModels
             set
             {
                 _searchFieldText = value;
-                _gridHandler.View.Refresh();
+                GridHandler.View.Refresh();
             }
         }
 
         private bool TextFilter(object item)
         {
             var coin = item as ICoin;
-            bool isNameMatch = string.IsNullOrEmpty(_searchFieldText) || coin.Name.IndexOf(_searchFieldText, StringComparison.OrdinalIgnoreCase) >= 0;
-            bool isCodeMatch = string.IsNullOrEmpty(_searchFieldText) || coin.Symbol.IndexOf(_searchFieldText, StringComparison.OrdinalIgnoreCase) >= 0;
+            var isNameMatch = string.IsNullOrEmpty(_searchFieldText) || coin.Name.IndexOf(_searchFieldText, StringComparison.OrdinalIgnoreCase) >= 0;
+            var isCodeMatch = string.IsNullOrEmpty(_searchFieldText) || coin.Symbol.IndexOf(_searchFieldText, StringComparison.OrdinalIgnoreCase) >= 0;
 
             return isNameMatch || isCodeMatch;
         }

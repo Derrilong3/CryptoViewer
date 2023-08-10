@@ -96,11 +96,11 @@ namespace CryptoViewer.Modules.Home.ViewModels
         public void ChangeTheme()
         {
             _isDark = !_isDark;
-            PaletteHelper _paletteHelper = new PaletteHelper();
-            ITheme theme = _paletteHelper.GetTheme();
+            PaletteHelper paletteHelper = new PaletteHelper();
+            ITheme theme = paletteHelper.GetTheme();
             IBaseTheme baseTheme = _isDark ? new MaterialDesignDarkTheme() : (IBaseTheme)new MaterialDesignLightTheme();
             theme.SetBaseTheme(baseTheme);
-            _paletteHelper.SetTheme(theme);
+            paletteHelper.SetTheme(theme);
         }
 
         protected override async void OnViewLoaded(object view)

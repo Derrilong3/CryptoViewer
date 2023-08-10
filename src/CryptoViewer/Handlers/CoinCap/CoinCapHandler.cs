@@ -3,7 +3,6 @@ using CryptoViewer.Base.Interfaces;
 using CryptoViewer.Base.Services;
 using CryptoViewer.Handlers.CoinCap.WebResponseClasses;
 using CryptoViewer.Handlers.Models;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -19,13 +18,13 @@ namespace CryptoViewer.Handlers.CoinCap
     {
         private const string GetExchangersUrl = "https://api.coincap.io/v2/exchanges";
         private const string GetPairsByExchangersUrl = "https://api.coincap.io/v2/markets";
-        private const string GetCoinsDatatUrl = "https://api.coincap.io/v2/assets";
+        private const string GetCoinsDataUrl = "https://api.coincap.io/v2/assets";
 
-        private IRestClient _restClient;
+        private readonly IRestClient _restClient;
+        private readonly Dictionary<string, Dictionary<string, double[][]>> _candles;
 
         private IEnumerable<ICoin> _coinGeckos;
         private IEnumerable<ICoin> _coinsCap;
-        private Dictionary<string, Dictionary<string, double[][]>> _candles;
 
         [ImportingConstructor]
         public CoinCapHandler(IRestClient client)
@@ -38,13 +37,12 @@ namespace CryptoViewer.Handlers.CoinCap
         {
             try
             {
-                Root<Exchanger[]> root = await _restClient.GetAsync<Root<Exchanger[]>>(GetExchangersUrl);
+                var root = await _restClient.GetAsync<Root<Exchanger[]>>(GetExchangersUrl);
 
                 return root.Data;
             }
             catch (Exception ex)
             {
-                // future message box
                 Debug.WriteLine(ex);
                 return Enumerable.Empty<IExchanger>();
             }
@@ -54,8 +52,8 @@ namespace CryptoViewer.Handlers.CoinCap
         {
             try
             {
-                string url = $"{GetCoinsDatatUrl}/{coin.Id}/markets";
-                Root<PairByCurrency[]> root = await _restClient.GetAsync<Root<PairByCurrency[]>>(url);
+                var url = $"{GetCoinsDataUrl}/{coin.Id}/markets";
+                var root = await _restClient.GetAsync<Root<PairByCurrency[]>>(url);
 
                 return root.Data;
             }
@@ -72,12 +70,12 @@ namespace CryptoViewer.Handlers.CoinCap
                 if (_coinsCap != null)
                     return _coinsCap;
 
-                NameValueCollection data = new NameValueCollection
+                var data = new NameValueCollection
                 {
                     { "limit", "2000" }
                 };
 
-                Root<Coin[]> root = await _restClient.GetAsync<Root<Coin[]>>(GetCoinsDatatUrl, data);
+                var root = await _restClient.GetAsync<Root<Coin[]>>(GetCoinsDataUrl, data);
 
                 _coinsCap = root.Data;
 
@@ -93,8 +91,8 @@ namespace CryptoViewer.Handlers.CoinCap
         {
             try
             {
-                string url = $"{GetCoinsDatatUrl}/{id}";
-                Root<Coin> coin = await _restClient.GetAsync<Root<Coin>>(url);
+                var url = $"{GetCoinsDataUrl}/{id}";
+                var coin = await _restClient.GetAsync<Root<Coin>>(url);
 
                 return coin.Data;
             }
@@ -108,13 +106,13 @@ namespace CryptoViewer.Handlers.CoinCap
         {
             try
             {
-                NameValueCollection data = new NameValueCollection
+                var data = new NameValueCollection
                 {
                     { "exchangeId", exchanger.Id },
                     { "limit", 30.ToString() }
                 };
 
-                Root<InnerPair[]> root = await _restClient.GetAsync<Root<InnerPair[]>>(GetPairsByExchangersUrl, data);
+                var root = await _restClient.GetAsync<Root<InnerPair[]>>(GetPairsByExchangersUrl, data);
 
                 return root.Data;
             }
@@ -129,25 +127,24 @@ namespace CryptoViewer.Handlers.CoinCap
         {
             try
             {
-                if (_coinGeckos == null)
-                    _coinGeckos = await GetCoinGecko();
+                _coinGeckos ??= await GetCoinGecko();
 
-                string id = _coinGeckos.First(x => x.Symbol.ToLower() == coin.Symbol.ToLower()).Id;
+                var id = _coinGeckos.First(x => string.Equals(x.Symbol, coin.Symbol, StringComparison.CurrentCultureIgnoreCase)).Id;
 
-                if (_candles.TryGetValue(id, out var intervals) && intervals.ContainsKey(interval))
+                if (_candles.TryGetValue(id, out var intervals) && intervals.TryGetValue(interval, out var ohlc))
                 {
-                    return intervals[interval];
+                    return ohlc;
                 }
 
-                string getOHCLUrl = $"https://api.coingecko.com/api/v3/coins/{id}/ohlc";
+                var getOhclUrl = $"https://api.coingecko.com/api/v3/coins/{id}/ohlc";
 
-                NameValueCollection data = new NameValueCollection
+                var data = new NameValueCollection
                 {
                     { "vs_currency", "usd" },
                     { "days", interval }
                 };
 
-                double[][] result = await _restClient.GetAsync<double[][]>(getOHCLUrl, data);
+                var result = await _restClient.GetAsync<double[][]>(getOhclUrl, data);
 
                 if (_candles.TryGetValue(id, out intervals))
                 {
@@ -168,7 +165,7 @@ namespace CryptoViewer.Handlers.CoinCap
             catch (Exception ex)
             {
                 Debug.WriteLine(ex);
-                return new double[0][];
+                return Array.Empty<double[]>();
             }
         }
 
@@ -176,7 +173,7 @@ namespace CryptoViewer.Handlers.CoinCap
         {
             string getCoinList = "https://api.coingecko.com/api/v3/coins/list";
 
-            Coin[] coins = await _restClient.GetAsync<Coin[]>(getCoinList);
+            var coins = await _restClient.GetAsync<Coin[]>(getCoinList);
 
             return coins;
         }

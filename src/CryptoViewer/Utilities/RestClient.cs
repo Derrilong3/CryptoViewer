@@ -15,21 +15,24 @@ namespace CryptoViewer.Utilities
     public class RestClient : IRestClient
     {
         private static HttpClient _httpClient;
-        private JsonSerializerSettings _jsonSettings;
+        private readonly JsonSerializerSettings _jsonSettings;
 
         public RestClient()
         {
             _httpClient = new HttpClient();
             _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            _httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36");
+            _httpClient.DefaultRequestHeaders.UserAgent.ParseAdd(
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36");
             _httpClient.DefaultRequestHeaders.CacheControl = new CacheControlHeaderValue() { NoCache = true };
 
             _jsonSettings = new JsonSerializerSettings() { NullValueHandling = NullValueHandling.Ignore };
 
-            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;
+            ServicePointManager.SecurityProtocol =
+                SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;
         }
 
-        private async Task<string> SendRequestAsync(string url, HttpMethod httpMethod, HttpContent content = null, NameValueCollection headers = null)
+        private async Task<string> SendRequestAsync(string url, HttpMethod httpMethod, HttpContent content = null,
+            NameValueCollection headers = null)
         {
             using (var request = new HttpRequestMessage(httpMethod, url))
             {
@@ -57,53 +60,57 @@ namespace CryptoViewer.Utilities
 
         public async Task<T> GetAsync<T>(string url, NameValueCollection query = null, NameValueCollection headers = null)
         {
-            string response = await GetAsync(url, query, headers);
+            var response = await GetAsync(url, query, headers);
 
             return JsonConvert.DeserializeObject<T>(response, _jsonSettings);
         }
 
         public Task<string> GetAsync(string url, NameValueCollection query = null, NameValueCollection headers = null)
         {
-            if (query != null)
-            {
-                string dataString = String.Join("&", Array.ConvertAll(query.AllKeys, key =>
-                string.Format("{0}={1}", WebUtility.UrlEncode(key), WebUtility.UrlEncode(query[key]))
-                ));
+            if (query == null)
+                return SendRequestAsync(url, HttpMethod.Get, null, headers);
 
-                url += (url.Contains("?") ? "&" : "?") + dataString;
-            }
+            var dataString = CreateQuery(query);
+
+            url += (url.Contains("?") ? "&" : "?") + dataString;
 
             return SendRequestAsync(url, HttpMethod.Get, null, headers);
         }
 
         public async Task<T> PostAsync<T>(string url, NameValueCollection data = null, NameValueCollection headers = null)
         {
-            string response = await PostAsync(url, data, headers);
+            var response = await PostAsync(url, data, headers);
 
             return JsonConvert.DeserializeObject<T>(response, _jsonSettings);
         }
 
         public Task<string> PostAsync(string url, NameValueCollection data = null, NameValueCollection headers = null)
         {
-            var content = new StringContent(data == null ? string.Empty : String.Join("&", Array.ConvertAll(data.AllKeys, key =>
-                string.Format("{0}={1}", WebUtility.UrlEncode(key), WebUtility.UrlEncode(data[key]))
-            )), Encoding.UTF8, "application/x-www-form-urlencoded");
+            var content = new StringContent(data == null ? string.Empty : CreateQuery(data), Encoding.UTF8, "application/x-www-form-urlencoded");
 
             return SendRequestAsync(url, HttpMethod.Post, content, headers);
         }
 
-        public async Task<R> PostAsJsonAsync<T, R>(string url, T data, NameValueCollection headers = null)
+        public async Task<TR> PostAsJsonAsync<T, TR>(string url, T data, NameValueCollection headers = null)
         {
-            string response = await PostAsJsonAsync(url, data, headers);
+            var response = await PostAsJsonAsync(url, data, headers);
 
-            return JsonConvert.DeserializeObject<R>(response, _jsonSettings);
+            return JsonConvert.DeserializeObject<TR>(response, _jsonSettings);
         }
 
         public Task<string> PostAsJsonAsync<T>(string url, T data, NameValueCollection headers = null)
         {
-            var content = new StringContent(Newtonsoft.Json.JsonConvert.SerializeObject(data), Encoding.UTF8, "application/json");
+            var content = new StringContent(JsonConvert.SerializeObject(data), Encoding.UTF8,
+                "application/json");
 
             return SendRequestAsync(url, HttpMethod.Post, content, headers);
+        }
+
+        private string CreateQuery(NameValueCollection collection)
+        {
+            return string.Join("&",
+                Array.ConvertAll(collection.AllKeys,
+                    key => $"{WebUtility.UrlEncode(key)}={WebUtility.UrlEncode(collection[key])}"));
         }
     }
 }

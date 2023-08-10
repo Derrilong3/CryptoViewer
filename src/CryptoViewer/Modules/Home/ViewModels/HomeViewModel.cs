@@ -53,6 +53,8 @@ namespace CryptoViewer.Modules.Home.ViewModels
 
                 _selectedExchanger = value;
 
+                SetPairsAsync();
+
                 NotifyOfPropertyChange(nameof(SelectedExchanger));
             }
         }
@@ -67,6 +69,18 @@ namespace CryptoViewer.Modules.Home.ViewModels
 
                 NotifyOfPropertyChange(nameof(Pairs));
             }
+        }
+
+        private async Task SetPairsAsync()
+        {
+            Pairs = await _apiHandler.GetCurrencies(_selectedExchanger);
+
+            if (GridHandler.Columns == null && _pairs.Any())
+            {
+                GridHandler.CreateGridColumns((string.Empty, _pairs.First().GetType()));
+            }
+
+            GridHandler.View = (CollectionView)CollectionViewSource.GetDefaultView(_pairs);
         }
 
         public async Task ShowDetails(IPair pair)
@@ -97,15 +111,6 @@ namespace CryptoViewer.Modules.Home.ViewModels
 
             if (exchanger != null)
                 SelectedExchanger = exchanger;
-
-            Pairs = await _apiHandler.GetCurrencies(_selectedExchanger);
-
-            if (GridHandler.Columns == null && _pairs.Any())
-            {
-                GridHandler.CreateGridColumns((string.Empty, _pairs.First().GetType()));
-            }
-
-            GridHandler.View = (CollectionView)CollectionViewSource.GetDefaultView(_pairs);
         }
     }
 }

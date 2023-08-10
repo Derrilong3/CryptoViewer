@@ -33,7 +33,7 @@ namespace CryptoViewer.Handlers.CoinCap
             _restClient = client;
         }
 
-        public async Task<IEnumerable<IExchanger>> GetExchangers()
+        public async Task<IEnumerable<IExchanger>> GetExchangersAsync()
         {
             try
             {
@@ -48,7 +48,7 @@ namespace CryptoViewer.Handlers.CoinCap
             }
         }
 
-        public async Task<IEnumerable<IPair>> GetExchangers(ICoin coin)
+        public async Task<IEnumerable<IPair>> GetExchangersAsync(ICoin coin)
         {
             try
             {
@@ -63,7 +63,7 @@ namespace CryptoViewer.Handlers.CoinCap
             }
         }
 
-        public async Task<IEnumerable<ICoin>> GetCurrencies()
+        public async Task<IEnumerable<ICoin>> GetCurrenciesAsync()
         {
             try
             {
@@ -87,7 +87,7 @@ namespace CryptoViewer.Handlers.CoinCap
             }
         }
 
-        public async Task<ICoin> GetCurrency(string id)
+        public async Task<ICoin> GetCurrencyAsync(string id)
         {
             try
             {
@@ -102,7 +102,7 @@ namespace CryptoViewer.Handlers.CoinCap
             }
         }
 
-        public async Task<IEnumerable<IPair>> GetCurrencies(IExchanger exchanger)
+        public async Task<IEnumerable<IPair>> GetCurrenciesAsync(IExchanger exchanger)
         {
             try
             {
@@ -123,7 +123,7 @@ namespace CryptoViewer.Handlers.CoinCap
             }
         }
 
-        public async Task<double[][]> GetOHLC(ICoin coin, string interval)
+        public async Task<double[][]> GetOhlcAsync(ICoin coin, string interval)
         {
             try
             {

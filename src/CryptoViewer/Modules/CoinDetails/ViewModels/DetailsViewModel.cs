@@ -64,7 +64,7 @@ namespace CryptoViewer.Modules.CoinDetails.ViewModels
 
         private async Task SetPairsAsync()
         {
-            Pairs = await _apiHandler.GetExchangers(_coin);
+            Pairs = await _apiHandler.GetExchangersAsync(_coin);
 
             if (GridView.Columns == null && _pairs.Any())
             {
@@ -79,7 +79,7 @@ namespace CryptoViewer.Modules.CoinDetails.ViewModels
             if (Coin == null)
                 return;
 
-            var data = await _apiHandler.GetOHLC(Coin, interval);
+            var data = await _apiHandler.GetOhlcAsync(Coin, interval);
             _chart.InitCandleStickChart(Coin.Name, data);
 
             NotifyOfPropertyChange(nameof(Labels));

@@ -73,7 +73,7 @@ namespace CryptoViewer.Modules.Home.ViewModels
 
         private async Task SetPairsAsync()
         {
-            Pairs = await _apiHandler.GetCurrencies(_selectedExchanger);
+            Pairs = await _apiHandler.GetCurrenciesAsync(_selectedExchanger);
 
             if (GridHandler.Columns == null && _pairs.Any())
             {
@@ -85,7 +85,7 @@ namespace CryptoViewer.Modules.Home.ViewModels
 
         public async Task ShowDetailsAsync(IPair pair)
         {
-            var coin = await _apiHandler.GetCurrency(pair.BaseId);
+            var coin = await _apiHandler.GetCurrencyAsync(pair.BaseId);
 
             var details = IoC.Get<IDetails>();
             details.Coin = coin;
@@ -105,7 +105,7 @@ namespace CryptoViewer.Modules.Home.ViewModels
 
         protected override async void OnViewLoaded(object view)
         {
-            Exchangers = await _apiHandler.GetExchangers();
+            Exchangers = await _apiHandler.GetExchangersAsync();
             SelectedExchanger = _exchangers.First();
         }
     }

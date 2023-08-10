@@ -97,7 +97,7 @@ namespace CryptoViewer.Modules.Converter.ViewModels
 
         protected override async void OnViewLoaded(object view)
         {
-            Currencies = await _apiHandler.GetCurrencies();
+            Currencies = await _apiHandler.GetCurrenciesAsync();
 
             FirstCoin = Currencies.FirstOrDefault();
             SecondCoin = FirstCoin;

@@ -6,11 +6,11 @@ namespace CryptoViewer.Base.Services
 {
     internal interface IApiHandler
     {
-        Task<IEnumerable<IExchanger>> GetExchangers();
-        Task<IEnumerable<IPair>> GetExchangers(ICoin coin);
-        Task<IEnumerable<ICoin>> GetCurrencies();
-        Task<ICoin> GetCurrency(string id);
-        Task<IEnumerable<IPair>> GetCurrencies(IExchanger exchanger);
-        Task<double[][]> GetOHLC(ICoin coin, string interval);
+        Task<IEnumerable<IExchanger>> GetExchangersAsync();
+        Task<IEnumerable<IPair>> GetExchangersAsync(ICoin coin);
+        Task<IEnumerable<ICoin>> GetCurrenciesAsync();
+        Task<ICoin> GetCurrencyAsync(string id);
+        Task<IEnumerable<IPair>> GetCurrenciesAsync(IExchanger exchanger);
+        Task<double[][]> GetOhlcAsync(ICoin coin, string interval);
     }
 }

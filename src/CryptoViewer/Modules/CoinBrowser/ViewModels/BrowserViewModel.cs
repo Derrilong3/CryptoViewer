@@ -52,7 +52,7 @@ namespace CryptoViewer.Modules.CoinBrowser.ViewModels
 
         private async Task GetCurrencies()
         {
-            Currencies = await _apiHandler.GetCurrencies();
+            Currencies = await _apiHandler.GetCurrenciesAsync();
 
             if (_currencies.Count() > 0)
             {

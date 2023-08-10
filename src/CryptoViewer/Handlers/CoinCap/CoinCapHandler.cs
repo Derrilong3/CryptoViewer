@@ -127,7 +127,7 @@ namespace CryptoViewer.Handlers.CoinCap
         {
             try
             {
-                _coinGeckos ??= await GetCoinGecko();
+                _coinGeckos = _coinGeckos ?? await GetCoinGecko();
 
                 var id = _coinGeckos.First(x => string.Equals(x.Symbol, coin.Symbol, StringComparison.CurrentCultureIgnoreCase)).Id;
 

@@ -1,9 +1,11 @@
 ﻿using Caliburn.Micro;
-using CryptoViewer.Modules.MainMenu.Models;
+using CryptoViewer.Base;
+using System.ComponentModel.Composition;
 
 namespace CryptoViewer.Modules.CoinBrowser
 {
-    internal class BrowserMenuItem : IMenuItem
+    [Export(typeof(IModule))]
+    internal class Module : IModule
     {
         public string Name => "Search";
 

@@ -1,12 +1,12 @@
-﻿using CryptoViewer.Modules.MainMenu.Models;
+﻿using CryptoViewer.Base;
 using System.Collections.Generic;
 
 namespace CryptoViewer.Modules.MainMenu
 {
     internal interface IMenu
     {
-        List<IMenuItem> Modules { get; }
+        List<IModule> Modules { get; }
 
-        void ClickMenu(IMenuItem item);
+        void ClickMenu(IModule item);
     }
 }

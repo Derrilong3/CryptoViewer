@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace CryptoViewer.Modules.MainMenu.ViewModels
 {
     [Export(typeof(IMenu))]
-    internal class MenuViewModel : Conductor<IScreen>, IMenu
+    internal class MenuViewModel : Screen, IMenu
     {
         [Import]
         private IShell _shell;

@@ -1,5 +1,6 @@
 ﻿using CryptoViewer.Base;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace CryptoViewer.Modules.MainMenu
 {
@@ -7,6 +8,6 @@ namespace CryptoViewer.Modules.MainMenu
     {
         List<IModule> Modules { get; }
 
-        void ClickMenu(IModule item);
+        Task ClickMenu(IModule item);
     }
 }

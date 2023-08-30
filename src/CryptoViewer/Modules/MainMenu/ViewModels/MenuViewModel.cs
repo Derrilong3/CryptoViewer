@@ -1,10 +1,10 @@
 ﻿using Caliburn.Micro;
 using CryptoViewer.Base;
 using CryptoViewer.Base.Services;
-using CryptoViewer.Modules.Home.ViewModels;
+using CryptoViewer.Modules.Home;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using System.Linq;
+using System.Threading.Tasks;
 
 namespace CryptoViewer.Modules.MainMenu.ViewModels
 {
@@ -19,19 +19,24 @@ namespace CryptoViewer.Modules.MainMenu.ViewModels
 
         public List<IModule> Modules => _modules;
 
-        public void ClickMenu(IModule item)
+        public async Task ClickMenu(IModule item)
         {
             var selectedContent = item.UserInterface;
 
-            if (selectedContent == _shell.ActiveItem)
-                return;
-
-            _shell.ActivateItem(selectedContent);
+            await Open(selectedContent);
         }
 
-        protected override void OnViewLoaded(object view)
+        private async Task Open(IScreen screen)
         {
-            ClickMenu(Modules.FirstOrDefault(x => x.UserInterface.GetType() == typeof(HomeViewModel)));
+            if (screen == _shell.ActiveItem)
+                return;
+
+            await _shell.ActivateItem(screen);
+        }
+
+        protected override async void OnViewLoaded(object view)
+        {
+            await Open((IScreen)IoC.Get<IHome>());
         }
     }
 }

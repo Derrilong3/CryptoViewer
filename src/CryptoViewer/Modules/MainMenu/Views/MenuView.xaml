@@ -10,7 +10,6 @@
     <Grid>
         <ListBox Grid.Row="0"
                  ItemsSource="{Binding Modules}"
-                 SelectedItem="{Binding SelectedContent}"
                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                  ScrollViewer.VerticalScrollBarVisibility="Disabled"
                  HorizontalAlignment="Left">

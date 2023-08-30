@@ -22,7 +22,7 @@ namespace CryptoViewer.Modules.Shell.ViewModels
 
         public IMenu MainMenu => _menu;
 
-        public Task ActivateItem(IScreen obj)
+        public override Task ActivateItemAsync(IScreen obj, CancellationToken cancellationToken)
         {
             if (ReferenceEquals(obj, this))
                 return Task.CompletedTask;
@@ -30,7 +30,7 @@ namespace CryptoViewer.Modules.Shell.ViewModels
             if (ReferenceEquals(obj, ActiveItem))
                 return Task.CompletedTask;
 
-            return ActivateItemAsync(obj);
+            return base.ActivateItemAsync(obj, cancellationToken);
         }
 
         protected override Task OnDeactivateAsync(bool close, CancellationToken cancellationToken)
@@ -42,7 +42,7 @@ namespace CryptoViewer.Modules.Shell.ViewModels
 
         public Task HandleAsync(ChangeActiveItemEvent message, CancellationToken cancellationToken)
         {
-            return ActivateItem(message.NewActiveItem);
+            return ActivateItemAsync(message.NewActiveItem, CancellationToken.None);
         }
     }
 }

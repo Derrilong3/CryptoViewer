@@ -4,6 +4,7 @@ using CryptoViewer.Base.Services;
 using CryptoViewer.Modules.Home;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace CryptoViewer.Modules.MainMenu.ViewModels
@@ -31,7 +32,7 @@ namespace CryptoViewer.Modules.MainMenu.ViewModels
             if (screen == _shell.ActiveItem)
                 return;
 
-            await _shell.ActivateItem(screen);
+            await _shell.ActivateItemAsync(screen, CancellationToken.None);
         }
 
         protected override async void OnViewLoaded(object view)
